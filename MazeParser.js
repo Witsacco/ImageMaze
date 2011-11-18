@@ -1,7 +1,8 @@
 var maze = 
 	"XX..XX..\n" +
 	".XXXXXXX\n" +
-	"...XX..X";
+	"...XX..X\n" +
+	"....XXXX";
 
 function MazeParser( text ) {
 	this.parsed = this.parse( text );
