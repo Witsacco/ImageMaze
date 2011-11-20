@@ -1,4 +1,4 @@
-
+var App = new ImageMazeApp();
 
 var mvMatrix = mat4.create();
 var mvMatrixStack = new ModelViewStack( mat4 );
@@ -13,45 +13,7 @@ function degToRad( degrees ) {
 	return degrees * Math.PI / 180;
 }
 
-var xRot = 0;
-
-var x = 0, z = 1;
-
 var tunnelLength = 5;
-
-var filter = 0;
-
-var currentlyPressedKeys = {};
-
-function handleKeyDown( event ) {
-	currentlyPressedKeys[ event.keyCode ] = true;
-}
-
-function handleKeyUp( event ) {
-	currentlyPressedKeys[ event.keyCode ] = false;
-}
-
-function handleKeys() {
-	if ( currentlyPressedKeys[ 40 ] ) {
-		// Down arrow
-		
-		x += (0.05 * Math.sin(xRot));
-		z -= (0.05 * Math.cos(xRot));
-	} else if ( currentlyPressedKeys[ 38 ] ) {
-		// Up arrow
-
-		x -= (0.05 * Math.sin(xRot));
-		z += (0.05 * Math.cos(xRot));
-	}
-	
-	if ( currentlyPressedKeys[ 37 ] ) {
-		// Left arrow
-		xRot -= 0.05;
-	} else if ( currentlyPressedKeys[ 39 ] ) {
-		// Right arrow
-		xRot += 0.05;
-	}
-}
 
 var cubeVertexPositionBuffer;
 var cubeVertexTextureCoordBuffer;
@@ -185,8 +147,8 @@ function drawScene( gl ) {
 
 	mat4.identity( mvMatrix );
 
-	mat4.rotate( mvMatrix, xRot, [0, 1, 0] );
-	mat4.translate( mvMatrix, [ x, 0.0, z ] );
+	mat4.rotate( mvMatrix, App.getRot(), [0, 1, 0] );
+	mat4.translate( mvMatrix, [ App.getX(), 0.0, App.getZ() ] );
 	
 	// -- Draw each cube --
 	for ( var i = 0; i < tunnelLength; ++i ) {
@@ -237,7 +199,7 @@ function drawCube( gl, indexBuffer ) {
 
 function tick( gl ) {
 	requestAnimFrame( function() { tick( gl) } );
-	handleKeys();
+	App.handleKeys();
 	drawScene( gl );
 }
 
@@ -254,9 +216,6 @@ function webGLStart() {
 
 	gl.clearColor( 0.0, 0.0, 0.0, 1.0 );
 	gl.enable( gl.DEPTH_TEST );
-
-	document.onkeydown = handleKeyDown;
-	document.onkeyup = handleKeyUp;
 
 	tick( gl );
 }

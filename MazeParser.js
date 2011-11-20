@@ -52,7 +52,7 @@ MazeParser.prototype.buildCubes = function( parsed ) {
 	for ( var i in parsed ) {
 		var line = parsed[ i ];
 		
-		line.unshift( false );
+	  	line.unshift( false );
 		line.push( false );
 	}
 	
