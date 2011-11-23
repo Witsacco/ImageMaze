@@ -1,3 +1,8 @@
+var maze =
+	".XXX\n" +
+	".X.X\n" +
+	"XX.X";
+
 function ImageMazeApp() {
 	
 	var keyHandler = new KeyHandler();
@@ -13,6 +18,10 @@ function ImageMazeApp() {
 	
 	this.keyHandler = keyHandler;
 	
+	this.mvMatrixStack = new ModelViewStack( mat4 );
+	
+	this.maze = new MazeParser( maze );
+
 	return this;
 }
 
@@ -23,3 +32,4 @@ ImageMazeApp.prototype.handleKeys = function() {
 ImageMazeApp.prototype.getX = function() { return this.pos.x };
 ImageMazeApp.prototype.getZ = function() { return this.pos.z };
 ImageMazeApp.prototype.getRot = function() { return this.pos.xRot };
+ImageMazeApp.prototype.getMaze = function() { return this.maze };

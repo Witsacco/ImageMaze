@@ -1,9 +1,3 @@
-var maze = 
-	"XX..XX..\n" +
-	".XXXXXXX\n" +
-	"...XX..X\n" +
-	"....XXXX";
-
 function MazeParser( text ) {
 	this.parsed = this.parse( text );
 	this.grid = this.buildCubes( this.parsed );
@@ -83,5 +77,3 @@ MazeParser.prototype.buildCubes = function( parsed ) {
 	
 	return grid;
 };
-
-var parser = new MazeParser( maze );
