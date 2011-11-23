@@ -7,6 +7,19 @@ MazeParser.prototype.getCubes = function() {
 	return this.grid;
 }
 
+MazeParser.prototype.isValidPosition = function( x, z ) {
+	
+	var absX = ( Math.abs( x ) + 1 ) / 2;
+	var absZ = ( Math.abs( z ) + 1 ) / 2;
+	
+	var roundX = Math.floor( absX );
+	var roundZ = Math.floor( absZ );
+	
+	var valid = ( this.grid[ this.grid.length - roundZ - 1 ][ roundX ] !== null ? "VALID" : "NOT VALID" );
+	
+	document.getElementById( "isValid" ).innerHTML = "X: " + x + " (" + roundX + ") Z: " + z + "(" + roundZ + ") Valid: " + valid;
+};
+
 MazeParser.prototype.parse = function( text ) {
 	var lines = text.split( "\n" );
 

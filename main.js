@@ -126,13 +126,10 @@ function initBuffers( gl ) {
 			}
 		}
 	}
-
-//	cubeVertexIndexBuffer0 = cubeBuffers[ 'bottom' ];
-//	cubeVertexIndexBuffer1 = cubeBuffers[ 'top-bottom' ];
-//	cubeVertexIndexBuffer2 = cubeBuffers[ 'top' ];
 }
 
 function drawScene( gl ) {
+	
 	gl.viewport( 0, 0, gl.viewportWidth, gl.viewportHeight );
 	gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT );
 
@@ -207,7 +204,16 @@ function tick( gl ) {
 		tick( gl )
 	} );
 	App.handleKeys();
-	drawScene( gl );
+	
+	var isValid = App.getMaze().isValidPosition( App.getX(), App.getZ() );
+	
+	if ( !isValid ) {
+		App.priorPos();
+	}
+	else {
+		App.registerMove();
+		drawScene( gl );
+	}
 }
 
 var crateTexture;

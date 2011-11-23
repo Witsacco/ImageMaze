@@ -1,7 +1,8 @@
 var maze =
 	".XXX\n" +
 	".X.X\n" +
-	"XX.X";
+	"XX.X\n" +
+	"X..X";
 
 function ImageMazeApp() {
 	
@@ -11,6 +12,12 @@ function ImageMazeApp() {
 		x : 0,
 		z : 1,
 		xRot : 0
+	};
+	
+	this.ppos = {
+		x: 0,
+		z: 1,
+		xRot: 0
 	};
 	
 	document.onkeydown = function( e ) { keyHandler.handleKeyDown( e ) };
@@ -27,6 +34,14 @@ function ImageMazeApp() {
 
 ImageMazeApp.prototype.handleKeys = function() {
 	this.keyHandler.handleKeys( this.pos );
+};
+
+ImageMazeApp.prototype.priorPos = function() {
+	this.pos = this.ppos;
+};
+
+ImageMazeApp.prototype.registerMove = function() {
+	this.ppos = this.pos;
 };
 
 ImageMazeApp.prototype.getX = function() { return this.pos.x };
