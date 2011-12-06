@@ -9,14 +9,14 @@ function ImageMazeApp() {
 	var keyHandler = new KeyHandler();
 	
 	this.pos = {
-		x : 0,
-		z : 0,
+		x : -1,
+		z : -1,
 		xRot : Math.PI
 	};
 	
 	this.ppos = {
-		x: 0,
-		z: 0,
+		x: -1,
+		z: -1,
 		xRot: Math.PI
 	};
 	

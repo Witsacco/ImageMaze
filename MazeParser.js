@@ -1,6 +1,7 @@
 function MazeParser( text ) {
 	this.parsed = this.parse( text );
 	this.grid = this.buildCubes( this.parsed );
+	this.radius = 0.35;
 }
 
 MazeParser.prototype.getCubes = function() {
@@ -9,25 +10,31 @@ MazeParser.prototype.getCubes = function() {
 
 MazeParser.prototype.getPositionValidity = function( currentX, currentZ, priorX, priorZ ) {
 	
-	
+	var r = this.radius;
 	
 	// Assume priorX and priorZ are a valid state
 	
-	var absCurX = Math.floor( ( Math.abs( currentX ) ) / 2 );
-	var absCurZ = Math.floor( ( Math.abs( currentZ ) ) / 2 );
-	var absPriX = Math.floor( ( Math.abs( priorX   ) ) / 2 );
-	var absPriZ = Math.floor( ( Math.abs( priorZ   ) ) / 2 );
+	var absCurX = Math.floor( Math.abs( currentX ) / 2 );
+	var absCurX_buffL = Math.floor( Math.abs( currentX - r ) / 2 );
+	var absCurX_buffR = Math.floor( Math.abs( currentX + r ) / 2 );
+	
+	var absCurZ = Math.floor( Math.abs( currentZ ) / 2 );
+	var absCurZ_buffU = Math.floor( Math.abs( currentZ - r ) / 2 );
+	var absCurZ_buffD = Math.floor( Math.abs( currentZ + r ) / 2 );
+	
+	var absPriX = Math.floor( Math.abs( priorX   ) / 2 );
+	var absPriZ = Math.floor( Math.abs( priorZ   ) / 2 );
 
 	var result = { "x": false, "z": false };
 	
 	var gridHeight = this.grid.length;
 	var gridWidth = this.grid[ 0 ].length; // Assume all rows are the same length
 	
-	if ( currentX <= 0 && absCurX < gridWidth && this.grid[ gridHeight - absPriZ - 1 ][ absCurX ] !== null ) {
+	if ( currentX + r <= 0 && absCurX < gridWidth && this.grid[ gridHeight - absPriZ - 1 ][ absCurX ] !== null ) {
 		result.x = true;
 	}
 		
-	if ( currentZ <= 0 && absCurZ < gridHeight && this.grid[ gridHeight - absCurZ - 1 ][ absPriX ] !== null ) {
+	if ( currentZ + r <= 0 && absCurZ < gridHeight && this.grid[ gridHeight - absCurZ - 1 ][ absPriX ] !== null ) {
 		result.z = true;
 	}
 
