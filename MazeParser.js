@@ -7,17 +7,37 @@ MazeParser.prototype.getCubes = function() {
 	return this.grid;
 }
 
-MazeParser.prototype.isValidPosition = function( x, z ) {
+MazeParser.prototype.getPositionValidity = function( currentX, currentZ, priorX, priorZ ) {
 	
-	var absX = ( Math.abs( x ) + 1 ) / 2;
-	var absZ = ( Math.abs( z ) + 1 ) / 2;
 	
-	var roundX = Math.floor( absX );
-	var roundZ = Math.floor( absZ );
 	
-	var valid = ( this.grid[ this.grid.length - roundZ - 1 ][ roundX ] !== null ? "VALID" : "NOT VALID" );
+	// Assume priorX and priorZ are a valid state
 	
-	document.getElementById( "isValid" ).innerHTML = "X: " + x + " (" + roundX + ") Z: " + z + "(" + roundZ + ") Valid: " + valid;
+	var absCurX = Math.floor( ( Math.abs( currentX ) ) / 2 );
+	var absCurZ = Math.floor( ( Math.abs( currentZ ) ) / 2 );
+	var absPriX = Math.floor( ( Math.abs( priorX   ) ) / 2 );
+	var absPriZ = Math.floor( ( Math.abs( priorZ   ) ) / 2 );
+
+	var result = { "x": false, "z": false };
+	
+	var gridHeight = this.grid.length;
+	var gridWidth = this.grid[ 0 ].length; // Assume all rows are the same length
+	
+	if ( currentX <= 0 && absCurX < gridWidth && this.grid[ gridHeight - absPriZ - 1 ][ absCurX ] !== null ) {
+		result.x = true;
+	}
+		
+	if ( currentZ <= 0 && absCurZ < gridHeight && this.grid[ gridHeight - absCurZ - 1 ][ absPriX ] !== null ) {
+		result.z = true;
+	}
+
+	var elValid = document.getElementById( "isValid" );
+	elValid.innerHTML = "cX: " + currentX + " cZ: " + currentZ + "<br>" +
+		"aX: " + absCurX + " aZ: " + absCurZ + "<br>" +
+		"vX: " + result.x + " vZ: " + result.z;
+	
+	return result;
+	
 };
 
 MazeParser.prototype.parse = function( text ) {

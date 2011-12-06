@@ -18,10 +18,6 @@ var cubeVertexPositionBuffer;
 var cubeVertexTextureCoordBuffer;
 var cubeBuffers = {};
 
-//var cubeVertexIndexBuffer0;
-//var cubeVertexIndexBuffer1;
-//var cubeVertexIndexBuffer2;
-
 function initBuffers( gl ) {
 
 	cubeVertexPositionBuffer = gl.createBuffer();
@@ -138,7 +134,12 @@ function drawScene( gl ) {
 	mat4.identity( mvMatrix );
 
 	mat4.rotate( mvMatrix, App.getRot(), [ 0, 1, 0 ] );
-	mat4.translate( mvMatrix, [ App.getX(), 0.0, App.getZ() ] );
+
+	// Move to (-1, -1)
+	mat4.translate( mvMatrix, [ 1.0, 0.0, 1.0 ] );
+	
+
+	mat4.translate( mvMatrix, [ App.getCurX(), 0.0, App.getCurZ() ] );
 
 	// Grab our grid of Cubes
 	var maze = App.getMaze().getCubes();
@@ -205,22 +206,48 @@ function tick( gl ) {
 	} );
 	App.handleKeys();
 	
-	var isValid = App.getMaze().isValidPosition( App.getX(), App.getZ() );
+	var theMaze = App.getMaze();
+	//var isValid = theMaze.isValidPosition( App.getX(), App.getZ(), App.getRot() );
+	var isValid = theMaze.getPositionValidity( App.getCurX(), App.getCurZ(), App.getPriX(), App.getPriZ() );
+	/*
+	{
+		"x": true,
+		"z": false
+	}
+	*/
 	
+	if ( isValid.x === true ) {
+		App.registerX();
+	}
+	else {
+		App.revertToPriorX();
+	}
+	
+	if ( isValid.z === true ) {
+		App.registerZ();
+	}
+	else {
+		App.revertToPriorZ();
+	}
+	
+	/*
 	if ( !isValid ) {
+		//console.log(isValid);
 		App.priorPos();
 	}
 	else {
 		App.registerMove();
-		drawScene( gl );
 	}
+	*/
+	
+	drawScene( gl );
 }
 
 var crateTexture;
 
 function webGLStart() {
 	var canvas = document.getElementById( "lesson06-canvas" );
-
+	
 	var gl = initGL( canvas );
 
 	initShaders( gl );
