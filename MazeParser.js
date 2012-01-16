@@ -1,72 +1,107 @@
+
+/*
+ * Constructor for new MazeParser objects
+ */
 function MazeParser( text ) {
+	
+	// Parse the text into a grid of booleans
 	this.parsed = this.parse( text );
+	
+	// Convert booleans into a grid of Cubes
 	this.grid = this.buildCubes( this.parsed );
-	this.radius = 0.35;
 }
 
+/*
+ * Getter for grid of Cubes
+ */
 MazeParser.prototype.getCubes = function() {
 	return this.grid;
-}
-
-MazeParser.prototype.getPositionValidity = function( currentX, currentZ, priorX, priorZ ) {
-	
-	var r = this.radius;
-	
-	// Assume priorX and priorZ are a valid state
-	
-	var absCurX = Math.floor( Math.abs( currentX ) / 2 );
-	var absCurX_buffL = Math.floor( Math.abs( currentX - r ) / 2 );
-	var absCurX_buffR = Math.floor( Math.abs( currentX + r ) / 2 );
-	
-	var absCurZ = Math.floor( Math.abs( currentZ ) / 2 );
-	var absCurZ_buffU = Math.floor( Math.abs( currentZ - r ) / 2 );
-	var absCurZ_buffD = Math.floor( Math.abs( currentZ + r ) / 2 );
-	
-	var absPriX = Math.floor( Math.abs( priorX   ) / 2 );
-	var absPriZ = Math.floor( Math.abs( priorZ   ) / 2 );
-
-	var result = { "x": false, "z": false };
-	
-	var gridHeight = this.grid.length;
-	var gridWidth = this.grid[ 0 ].length; // Assume all rows are the same length
-	
-	if ( currentX + r <= 0 && absCurX < gridWidth && this.grid[ gridHeight - absPriZ - 1 ][ absCurX ] !== null ) {
-		result.x = true;
-	}
-		
-	if ( currentZ + r <= 0 && absCurZ < gridHeight && this.grid[ gridHeight - absCurZ - 1 ][ absPriX ] !== null ) {
-		result.z = true;
-	}
-
-	var elValid = document.getElementById( "isValid" );
-	elValid.innerHTML = "cX: " + currentX + " cZ: " + currentZ + "<br>" +
-		"aX: " + absCurX + " aZ: " + absCurZ + "<br>" +
-		"vX: " + result.x + " vZ: " + result.z;
-	
-	return result;
-	
 };
 
+
+MazeParser.prototype.isValidPosition = function( x, z ) {
+	
+	document.getElementById( "isValid" ).innerHTML = "X: " + x + " Z: " + z;
+	
+	var testX = ( x + 1 ) / 2;
+	var testZ = ( z - 1 ) / 2;
+	
+	// Flip sign of Z
+	testZ = -testZ;
+	
+	var buffer = 0.30;
+	var leftX = testX - buffer;
+	var backZ = testZ - buffer;
+	var rightX = testX + buffer;
+	var frontZ = testZ + buffer;
+	
+	// If either is negative, return false
+	if ( leftX < 0 || backZ < 0 ) {
+		return false;
+	}
+	
+	// If Z exceeds height of grid, return false
+	if ( frontZ >= this.grid.length ) {
+		return false;
+	}
+	
+	// If X exceeds width of grid, return false
+	if ( rightX >= this.grid[ 0 ].length ) {
+		return false;
+	}
+		
+	// Index into grid
+	var floorLeftX = Math.floor( leftX );
+	var floorRightX = Math.floor( rightX );
+	var floorFrontZ = Math.floor( frontZ );
+	var floorBackZ = Math.floor( backZ );
+	
+	if ( this.grid[ floorFrontZ ][ floorLeftX ] === null || 
+		this.grid[ floorFrontZ ][ floorRightX ] === null ||
+		this.grid[ floorBackZ ][ floorLeftX ] === null ||
+		this.grid[ floorBackZ ][ floorRightX ] === null ) {
+		return false;
+	}
+
+	return true;
+};
+
+/*
+ * Parses the maze text into a grid of booleans
+ */
 MazeParser.prototype.parse = function( text ) {
+
+	// Split apart the text into newlines
 	var lines = text.split( "\n" );
 
+	// This will hold the arrays of booleans
 	var parsed = [];
 	
-	for ( var i in lines ) {
-		var line = lines[ i ];
+	// Iterate through the lines
+	for ( var lineNum = lines.length - 1; lineNum >= 0; --lineNum ) {
+		var line = lines[ lineNum ];
 		
+		// Split apart the characters on the current line
 		var tokens = line.split( "" );
 
+		// Iterate through the characters
 		for ( var j in tokens ) {
+			
+			// Token "X" means true, anything else is false
 			tokens[ j ] = ( tokens[ j ] === "X" ? true : false );
 		}
 		
+		// Add this array of booleans to the final result set
 		parsed.push( tokens );
 	}
 	
+	// Return the array of booleans
 	return parsed;
 }
 
+/*
+ * Converts a grid of booleans into a grid of Cubes
+ */
 MazeParser.prototype.buildCubes = function( parsed ) {
 	var grid = [];
 	

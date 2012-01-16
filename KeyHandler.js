@@ -1,34 +1,46 @@
+/*
+ * Constructor for new KeyHandler objects
+ */
 function KeyHandler() {
 	this.currentlyPressedKeys = {};
 	return this;
 }
 
+/*
+ * Register the currently pressed key as having been pressed
+ */
 KeyHandler.prototype.handleKeyDown = function( event ) {
 	this.currentlyPressedKeys[ event.keyCode ] = true;
 };
 
+/*
+ * Unregister the key that was recently pressed
+ */
 KeyHandler.prototype.handleKeyUp = function( event ) {
 	this.currentlyPressedKeys[ event.keyCode ] = false;
 };
 
+/*
+ * Adjust the position based on the currently pressed keys
+ */
 KeyHandler.prototype.handleKeys = function( pos ) {
+	// Down arrow
 	if ( this.currentlyPressedKeys[ 40 ] ) {
-		// Down arrow
-		
-		pos.x += ( 0.05 * Math.sin( pos.xRot ) );
-		pos.z -= ( 0.05 * Math.cos( pos.xRot ) );
-	} else if ( this.currentlyPressedKeys[ 38 ] ) {
-		// Up arrow
-
 		pos.x -= ( 0.05 * Math.sin( pos.xRot ) );
 		pos.z += ( 0.05 * Math.cos( pos.xRot ) );
 	}
-	
+	// Up arrow
+	else if ( this.currentlyPressedKeys[ 38 ] ) {
+		pos.x += ( 0.05 * Math.sin( pos.xRot ) );
+		pos.z -= ( 0.05 * Math.cos( pos.xRot ) );
+	}
+
+	// Left arrow
 	if ( this.currentlyPressedKeys[ 37 ] ) {
-		// Left arrow
 		pos.xRot -= 0.05;
-	} else if ( this.currentlyPressedKeys[ 39 ] ) {
-		// Right arrow
+	}
+	// Right arrow
+	else if ( this.currentlyPressedKeys[ 39 ] ) {
 		pos.xRot += 0.05;
 	}
-}
+};

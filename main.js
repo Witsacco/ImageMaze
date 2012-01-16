@@ -12,8 +12,6 @@ function degToRad( degrees ) {
 	return degrees * Math.PI / 180;
 }
 
-var tunnelLength = 5;
-
 var cubeVertexPositionBuffer;
 var cubeVertexTextureCoordBuffer;
 var cubeBuffers = {};
@@ -82,10 +80,6 @@ function initBuffers( gl ) {
 		"ceiling" : [ 8, 9, 10, 8, 10, 11 ]
 	};
 
-//	var cubeBuffers = {};
-
-	var cubeVertexIndices;
-
 	for ( var a = 0; a < 2; ++a ) {
 		for ( var b = 0; b < 2; ++b ) {
 			for ( var c = 0; c < 2; ++c ) {
@@ -99,7 +93,7 @@ function initBuffers( gl ) {
 					cubeBuffers[ name ] = gl.createBuffer();
 					gl.bindBuffer( gl.ELEMENT_ARRAY_BUFFER, cubeBuffers[ name ] );
 
-					cubeVertexIndices = [];
+					var cubeVertexIndices = [];
 					if ( a === 1 ) {
 						cubeVertexIndices = cubeVertexIndices.concat( wallIndices.front );
 					}
@@ -112,12 +106,12 @@ function initBuffers( gl ) {
 					if ( d === 1 ) {
 						cubeVertexIndices = cubeVertexIndices.concat( wallIndices.right );
 					}
+
 					cubeVertexIndices = cubeVertexIndices.concat( wallIndices.ceiling, wallIndices.floor );
 					
 					gl.bufferData( gl.ELEMENT_ARRAY_BUFFER, new Uint16Array( cubeVertexIndices ), gl.STATIC_DRAW );
 					cubeBuffers[ name ].itemSize = 1;
 					cubeBuffers[ name ].numItems = cubeVertexIndices.length;
-					
 				}
 			}
 		}
@@ -134,18 +128,13 @@ function drawScene( gl ) {
 	mat4.identity( mvMatrix );
 
 	mat4.rotate( mvMatrix, App.getRot(), [ 0, 1, 0 ] );
-
-	// Move to (-1, -1)
-	mat4.translate( mvMatrix, [ 1.0, 0.0, 1.0 ] );
-	
-
-	mat4.translate( mvMatrix, [ App.getCurX(), 0.0, App.getCurZ() ] );
+	mat4.translate( mvMatrix, [ -App.getX(), 0.0, -App.getZ() ] );
 
 	// Grab our grid of Cubes
 	var maze = App.getMaze().getCubes();
 	
 	// Iterate through the rows of the maze
-	for ( var totRows = maze.length - 1, rowNum = totRows; rowNum >= 0; --rowNum ) {
+	for ( var rowNum in maze ) {
 		var row = maze[ rowNum ];
 
 		// Save our current mvMatrix
@@ -177,7 +166,7 @@ function drawScene( gl ) {
 		mvMatrix = App.mvMatrixStack.pop();
 		
 		// Move pencil two units forward and reset the X axis back to where we started
-		mat4.translate( mvMatrix, [ 0.0, 0.0, 2 ] );
+		mat4.translate( mvMatrix, [ 0.0, 0.0, -2.0 ] );
 	}
 }
 
@@ -204,42 +193,30 @@ function tick( gl ) {
 	requestAnimFrame( function() {
 		tick( gl )
 	} );
+	
 	App.handleKeys();
-	
-	var theMaze = App.getMaze();
-	//var isValid = theMaze.isValidPosition( App.getX(), App.getZ(), App.getRot() );
-	var isValid = theMaze.getPositionValidity( App.getCurX(), App.getCurZ(), App.getPriX(), App.getPriZ() );
-	/*
-	{
-		"x": true,
-		"z": false
-	}
-	*/
-	
-	if ( isValid.x === true ) {
+
+	// Is (new x, old z) a valid position?
+	if ( App.getMaze().isValidPosition( App.getX(), App.getPriorZ() ) ) {
+
+		// If so, update x to new x
 		App.registerX();
 	}
 	else {
-		App.revertToPriorX();
+		App.revertX();
 	}
 	
-	if ( isValid.z === true ) {
+	// Is (x, new z) a valid position ?
+	if ( App.getMaze().isValidPosition( App.getX(), App.getZ() ) ) {
+
+		// If so, update z to new z
 		App.registerZ();
 	}
 	else {
-		App.revertToPriorZ();
+		App.revertZ();
 	}
 	
-	/*
-	if ( !isValid ) {
-		//console.log(isValid);
-		App.priorPos();
-	}
-	else {
-		App.registerMove();
-	}
-	*/
-	
+	// Draw scene
 	drawScene( gl );
 }
 
@@ -247,7 +224,7 @@ var crateTexture;
 
 function webGLStart() {
 	var canvas = document.getElementById( "lesson06-canvas" );
-	
+
 	var gl = initGL( canvas );
 
 	initShaders( gl );
