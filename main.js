@@ -156,7 +156,7 @@ function drawScene( gl ) {
 				App.mvMatrixStack.push( mvMatrix );
 
 				// Draw cube (possibly rotating paper)
-				drawCube( gl, indexBuffer );
+				drawCube( gl, indexBuffer, cube );
 
 				// Pop mvMatrix
 				mvMatrix = App.mvMatrixStack.pop();
@@ -173,7 +173,7 @@ function drawScene( gl ) {
 	}
 }
 
-function drawCube( gl, indexBuffer ) {
+function drawCube( gl, indexBuffer, cube ) {
 
 	gl.bindBuffer( gl.ARRAY_BUFFER, cubeVertexPositionBuffer );
 	gl.vertexAttribPointer( shaderProgram.vertexPositionAttribute, cubeVertexPositionBuffer.itemSize, gl.FLOAT, false,
@@ -184,7 +184,8 @@ function drawCube( gl, indexBuffer ) {
 			false, 0, 0 );
 
 	gl.activeTexture( gl.TEXTURE0 );
-	gl.bindTexture( gl.TEXTURE_2D, crateTexture );
+	var texture = ( cube instanceof FinishCube ? finishTexture : crateTexture );
+	gl.bindTexture( gl.TEXTURE_2D, texture );
 	gl.uniform1i( shaderProgram.samplerUniform, 0 );
 
 	gl.bindBuffer( gl.ELEMENT_ARRAY_BUFFER, indexBuffer );
@@ -223,7 +224,7 @@ function tick( gl ) {
 	drawScene( gl );
 }
 
-var crateTexture;
+var crateTexture, finishTexture;
 
 function webGLStart() {
 	var canvas = document.getElementById( "lesson06-canvas" );
@@ -232,7 +233,9 @@ function webGLStart() {
 
 	initShaders( gl );
 	initBuffers( gl );
-	crateTexture = initTexture( gl );
+	var textures = initTexture( gl );
+	crateTexture = textures.crate;
+	finishTexture = textures.finish;
 
 	gl.clearColor( 0.0, 0.0, 0.0, 1.0 );
 	gl.enable( gl.DEPTH_TEST );

@@ -93,15 +93,27 @@ function handleLoadedTexture( gl, texture ) {
 
 function initTexture( gl ) {
 	var crateImage = new Image();
+	var finishImage = new Image();
 
-	var texture = gl.createTexture();
-	texture.image = crateImage;
+	var mainTexture = gl.createTexture();
+	mainTexture.image = crateImage;
+
+	var finishTexture = gl.createTexture();
+	finishTexture.image = finishImage;
 	
 	crateImage.onload = function() {
-		handleLoadedTexture( gl, texture );
-	}
+		handleLoadedTexture( gl, mainTexture );
+	};
+
+	finishImage.onload = function() {
+		handleLoadedTexture( gl, finishTexture );
+	};
 
 	crateImage.src = "crate.gif";
+	finishImage.src = "finish_crate.gif";
 	
-	return texture;
+	return {
+		crate: mainTexture,
+		finish: finishTexture
+	};
 }
