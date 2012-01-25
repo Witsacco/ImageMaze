@@ -86,7 +86,9 @@ function initBuffers( gl ) {
 			for ( var c = 0; c < 2; ++c ) {
 				for ( var d = 0; d < 2; ++d ) {
 
-					var cube = new Cube( a === 0, b === 0, c === 0, d === 0 );
+					// Generate the name of a cube with the given wall combination
+					var cube = new Cube();
+					cube.setWalls( a === 0, b === 0, c === 0, d === 0 );
 					var name = cube.getName();
 					
 					console.log(name);

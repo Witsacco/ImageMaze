@@ -1,5 +1,5 @@
 var maze =
-	".X.X\n" +
+	".X.O\n" +
 	"XXXX\n" +
 	"X..X\n" +
 	"XXXX";

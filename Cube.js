@@ -1,14 +1,19 @@
 var Cube = ( function() {
 
-	function Cube( top, bottom, left, right ) {
+	function Cube() {
+		this.top = this.bottom = this.left = this.right = false;
+		
+		this.name = buildName( this.top, this.bottom, this.left, this.right );
+	}
+	
+	Cube.prototype.setWalls = function ( top, bottom, left, right ) {
 		this.top = top;
 		this.bottom = bottom;
 		this.left = left;
 		this.right = right;
 
 		this.name = buildName( top, bottom, left, right );
-		// this.indexBuffer = indexBuffers[ this.name ];
-	}
+	};
 
 	Cube.prototype.getName = function() {
 		return this.name;
