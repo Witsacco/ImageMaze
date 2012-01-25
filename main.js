@@ -1,4 +1,5 @@
 var App = new ImageMazeApp();
+App.timer.start();
 
 var mvMatrix = mat4.create();
 var pMatrix = mat4.create();

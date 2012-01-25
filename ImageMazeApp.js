@@ -28,6 +28,27 @@ function ImageMazeApp() {
 	this.mvMatrixStack = new ModelViewStack( mat4 );
 	
 	this.maze = new MazeParser( maze );
+	
+	// To be called when timer runs out
+	var elClockMessage;
+	var onTimerExpire = function() {
+		if ( !elClockMessage ) {
+			elClockMessage = document.getElementById( "clockMessage" );
+		}
+		
+		elClockMessage.innerHTML = "CLOCK EXPIRED!";
+	};
+	
+	var elClock;
+	var onTimerChange = function( secRemaining ) {
+		if ( !elClock ) {
+			elClock = document.getElementById( "clock" );
+		}
+		
+		elClock.innerHTML = secRemaining;
+	};
+
+	this.timer = new Timer( 5, onTimerExpire, onTimerChange );
 
 	return this;
 }
