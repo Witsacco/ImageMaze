@@ -94,6 +94,7 @@ function handleLoadedTexture( gl, texture ) {
 function initTexture( gl ) {
 	var crateImage = new Image();
 	var finishImage = new Image();
+	var texture;
 	
 	var numImageCubes = App.getMaze().getNumImageCubes();
 	var imageCubeTextures = [];
@@ -101,17 +102,19 @@ function initTexture( gl ) {
 	for ( var i = 0; i < numImageCubes; ++i ) {
 
 		var img = new Image();
+		img.id = i;
 		// TODO: this seems to be overwriting itself (see console output, where all ids are 2)
-		var texture = gl.createTexture();
+		texture = gl.createTexture();
 		texture.image = img;
 		texture.id = i;
 
+		imageCubeTextures.push( texture );
+
 		img.onload = function() {
-			console.log('calling something: ' + texture.id);
-			handleLoadedTexture( gl, texture );
+			console.log('calling something: ' + this.id);
+			handleLoadedTexture( gl, imageCubeTextures[ this.id ] );
 		};
 		
-		imageCubeTextures.push( texture );
 	}
 
 	var mainTexture = gl.createTexture();
