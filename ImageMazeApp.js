@@ -1,8 +1,13 @@
+// Cube types
+// X = standard cube
+// O = finishing cube
+// T = top image cube
+
 var maze =
 	".X.O\n" +
-	"XXXX\n" +
+	"TXXX\n" +
 	"X..X\n" +
-	"XXXX";
+	"XTXT";
 
 function ImageMazeApp() {
 	
@@ -79,3 +84,29 @@ ImageMazeApp.prototype.getPriorX = function() { return this.ppos.x };
 ImageMazeApp.prototype.getZ = function() { return this.pos.z };
 ImageMazeApp.prototype.getRot = function() { return this.pos.xRot };
 ImageMazeApp.prototype.getMaze = function() { return this.maze };
+
+ImageMazeApp.prototype.chooseWordAndRefreshImages = function() {
+	// Generate random word
+	var word = this.getNewWord();
+	
+	// Get image urls for this word
+	$.getJSON("/getImageUrls.html?q=" + word, this.handleURLs );
+	
+};
+
+// TODO: this method should be "private"
+ImageMazeApp.prototype.getNewWord = function() {
+	
+	// TODO: make this real
+	return "puppy";
+};
+
+ImageMazeApp.prototype.handleURLs = function( data ) {
+	
+	// TODO: fix this global nastiness
+	for (textureNum in imageCubeTextures) {
+		imageCubeTextures[ textureNum ].image.src = data[ textureNum ];
+	}
+
+};
+

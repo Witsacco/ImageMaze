@@ -5,7 +5,27 @@ function MazeParser( text ) {
 
 	// Parse the text into a grid of Cubes
 	this.grid = this.parse( text );
+	
+	this.numImageCubes = countImageCubes( this.grid );
+}
 
+function countImageCubes( grid ) {
+	
+	var numImageCubes = 0;
+	
+	for ( var rowNum in grid ) {
+		var row = grid[ rowNum ];
+		
+		for ( var colNum in row ){
+			var cube = row[ colNum ];
+			
+			if ( cube instanceof ImageCube ) {
+				++numImageCubes;
+			}
+		}
+	}
+
+	return numImageCubes;
 }
 
 /*
@@ -13,6 +33,10 @@ function MazeParser( text ) {
  */
 MazeParser.prototype.getCubes = function() {
 	return this.grid;
+};
+
+MazeParser.prototype.getNumImageCubes = function() {
+	return this.numImageCubes;
 };
 
 MazeParser.prototype.isValidPosition = function( x, z ) {
@@ -61,7 +85,7 @@ MazeParser.prototype.isValidPosition = function( x, z ) {
 };
 
 /*
- * Parses the maze text into a grid of booleans
+ * Parses the maze text into a grid of Cubes
  */
 MazeParser.prototype.parse = function( text ) {
 
@@ -70,6 +94,9 @@ MazeParser.prototype.parse = function( text ) {
 
 	// This will hold the interim grid
 	var parsed = [];
+	
+	// This is the number of ImageCubes we have; gives each ImageCube a sequential number
+	var imageCubeSequence = 0;
 
 	// Iterate through the lines
 	for ( var lineNum = lines.length - 1; lineNum >= 0; --lineNum ) {
@@ -92,6 +119,12 @@ MazeParser.prototype.parse = function( text ) {
 				// Token "O" means FinishCube
 				case 'O':
 					curRow.push( new FinishCube() );
+					break;
+					
+				// Token "T" means top ImageCube
+				case 'T':
+					curRow.push( new ImageCube( imageCubeSequence ) );
+					++imageCubeSequence;
 					break;
 
 				// Anything else means no cube
@@ -157,8 +190,5 @@ MazeParser.prototype.parse = function( text ) {
 		grid.push( gridRow );
 	}
 	
-	console.log(grid);
-
-	// Return the grid
 	return grid;
 };

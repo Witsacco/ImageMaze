@@ -1,5 +1,4 @@
 var App = new ImageMazeApp();
-App.timer.start();
 
 var mvMatrix = mat4.create();
 var pMatrix = mat4.create();
@@ -86,12 +85,13 @@ function initBuffers( gl ) {
 			for ( var c = 0; c < 2; ++c ) {
 				for ( var d = 0; d < 2; ++d ) {
 
-					// Generate the name of a cube with the given wall combination
+					// Generate the name of a cube with the given wall
+					// combination
 					var cube = new Cube();
 					cube.setWalls( a === 0, b === 0, c === 0, d === 0 );
 					var name = cube.getName();
-					
-					console.log(name);
+
+					console.log( name );
 
 					cubeBuffers[ name ] = gl.createBuffer();
 					gl.bindBuffer( gl.ELEMENT_ARRAY_BUFFER, cubeBuffers[ name ] );
@@ -111,7 +111,7 @@ function initBuffers( gl ) {
 					}
 
 					cubeVertexIndices = cubeVertexIndices.concat( wallIndices.ceiling, wallIndices.floor );
-					
+
 					gl.bufferData( gl.ELEMENT_ARRAY_BUFFER, new Uint16Array( cubeVertexIndices ), gl.STATIC_DRAW );
 					cubeBuffers[ name ].itemSize = 1;
 					cubeBuffers[ name ].numItems = cubeVertexIndices.length;
@@ -122,7 +122,7 @@ function initBuffers( gl ) {
 }
 
 function drawScene( gl ) {
-	
+
 	gl.viewport( 0, 0, gl.viewportWidth, gl.viewportHeight );
 	gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT );
 
@@ -135,14 +135,14 @@ function drawScene( gl ) {
 
 	// Grab our grid of Cubes
 	var maze = App.getMaze().getCubes();
-	
+
 	// Iterate through the rows of the maze
 	for ( var rowNum in maze ) {
 		var row = maze[ rowNum ];
 
 		// Save our current mvMatrix
 		App.mvMatrixStack.push( mvMatrix );
-		
+
 		// Iterate through the columns of the maze
 		for ( var colNum in row ) {
 			var cube = row[ colNum ];
@@ -165,10 +165,11 @@ function drawScene( gl ) {
 			// Move pencil
 			mat4.translate( mvMatrix, [ 2.0, 0.0, 0.0 ] );
 		}
-		
+
 		mvMatrix = App.mvMatrixStack.pop();
-		
-		// Move pencil two units forward and reset the X axis back to where we started
+
+		// Move pencil two units forward and reset the X axis back to where we
+		// started
 		mat4.translate( mvMatrix, [ 0.0, 0.0, -2.0 ] );
 	}
 }
@@ -184,7 +185,18 @@ function drawCube( gl, indexBuffer, cube ) {
 			false, 0, 0 );
 
 	gl.activeTexture( gl.TEXTURE0 );
-	var texture = ( cube instanceof FinishCube ? finishTexture : crateTexture );
+
+	var texture;
+	if ( cube instanceof ImageCube ) {
+		texture = imageCubeTextures[ cube.getCubeNumber() ];
+	}
+	else if ( cube instanceof FinishCube ) {
+		texture = finishTexture;
+	}
+	else {
+		texture = crateTexture;
+	}
+
 	gl.bindTexture( gl.TEXTURE_2D, texture );
 	gl.uniform1i( shaderProgram.samplerUniform, 0 );
 
@@ -197,7 +209,7 @@ function tick( gl ) {
 	requestAnimFrame( function() {
 		tick( gl )
 	} );
-	
+
 	App.handleKeys();
 
 	// Is (new x, old z) a valid position?
@@ -205,28 +217,31 @@ function tick( gl ) {
 
 		// If so, update x to new x
 		App.registerX();
-	}
-	else {
+	} else {
 		App.revertX();
 	}
-	
+
 	// Is (x, new z) a valid position ?
 	if ( App.getMaze().isValidPosition( App.getX(), App.getZ() ) ) {
 
 		// If so, update z to new z
 		App.registerZ();
-	}
-	else {
+	} else {
 		App.revertZ();
 	}
-	
+
 	// Draw scene
 	drawScene( gl );
 }
 
-var crateTexture, finishTexture;
+var crateTexture, finishTexture, imageCubeTextures;
 
 function webGLStart() {
+
+	// Assign the button handler
+	var startButton = document.getElementById( "startButton" );
+	startButton.onclick = startGame;
+
 	var canvas = document.getElementById( "lesson06-canvas" );
 
 	var gl = initGL( canvas );
@@ -236,9 +251,16 @@ function webGLStart() {
 	var textures = initTexture( gl );
 	crateTexture = textures.crate;
 	finishTexture = textures.finish;
+	imageCubeTextures = textures.images;
 
 	gl.clearColor( 0.0, 0.0, 0.0, 1.0 );
 	gl.enable( gl.DEPTH_TEST );
 
 	tick( gl );
+}
+
+function startGame() {
+	App.chooseWordAndRefreshImages();
+
+	App.timer.start();
 }
