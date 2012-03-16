@@ -12,7 +12,6 @@ IMAGES_FOLDER = "retrieved_images"
 WORD_LIST_FILE = "WordList.TXT"
 
 # given a word
-word = 'rain'
 num_requested = 5
 
 ## Generate random word
