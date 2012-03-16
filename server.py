@@ -5,13 +5,25 @@ import cStringIO
 import json
 import re
 import urllib
+import random
 
 GOOGLE_IMAGES_URL = 'https://www.google.com/search?tbm=isch&q=%s'
 IMAGES_FOLDER = "retrieved_images"
+WORD_LIST_FILE = "WordList.TXT"
 
 # given a word
 word = 'rain'
 num_requested = 5
+
+## Generate random word
+word_list_file_handle = open( WORD_LIST_FILE )
+word_list = word_list_file_handle.readlines()
+
+words = len( word_list )
+index = random.randint( 0, words - 1 )
+word = word_list[ index ].strip()
+
+print "Random word is '%s'" % word
 
 # construct url for google images
 images_url = GOOGLE_IMAGES_URL % word
