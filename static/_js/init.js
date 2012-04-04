@@ -131,8 +131,8 @@ function initTexture( gl ) {
 		handleLoadedTexture( gl, finishTexture );
 	};
 
-	crateImage.src = "crate.gif";
-	finishImage.src = "finish_crate.gif";
+	crateImage.src = "static/_images/crate.gif";
+	finishImage.src = "static/_images/finish_crate.gif";
 	
 	return {
 		crate: mainTexture,

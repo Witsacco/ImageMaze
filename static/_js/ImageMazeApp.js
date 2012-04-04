@@ -86,27 +86,14 @@ ImageMazeApp.prototype.getRot = function() { return this.pos.xRot };
 ImageMazeApp.prototype.getMaze = function() { return this.maze };
 
 ImageMazeApp.prototype.chooseWordAndRefreshImages = function() {
-	// Generate random word
-	var word = this.getNewWord();
-	
-	// Get image urls for this word
-	$.getJSON("/getImageUrls.html?q=" + word, this.handleURLs );
-	
-};
-
-// TODO: this method should be "private"
-ImageMazeApp.prototype.getNewWord = function() {
-	
-	// TODO: make this real
-	return "puppy";
+	$.getJSON("/getImageUrls", this.handleURLs );
 };
 
 ImageMazeApp.prototype.handleURLs = function( data ) {
-	
+
 	// TODO: fix this global nastiness
 	for (textureNum in imageCubeTextures) {
 		imageCubeTextures[ textureNum ].image.src = data[ textureNum ];
 	}
 
 };
-
