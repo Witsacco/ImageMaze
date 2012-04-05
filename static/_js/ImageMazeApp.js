@@ -37,14 +37,11 @@ function ImageMazeApp() {
 	
 	this.maze = new MazeParser( maze );
 	
+	var that = this;
+	
 	// To be called when timer runs out
-	var elClockMessage;
 	var onTimerExpire = function() {
-		if ( !elClockMessage ) {
-			elClockMessage = document.getElementById( "clockMessage" );
-		}
-		
-		elClockMessage.innerHTML = "CLOCK EXPIRED!";
+		that.timeExpired();
 	};
 	
 	var elClock;
@@ -114,3 +111,22 @@ ImageMazeApp.prototype.addTime = function() {
 	this.timer.add( 10 );
 };
 
+ImageMazeApp.prototype.turnOnKeyHandler = function() {
+	this.keyHandler.enable();
+};
+
+ImageMazeApp.prototype.turnOffKeyHandler = function() {
+	this.keyHandler.disable();
+};
+
+ImageMazeApp.prototype.timeExpired = function() {
+	this.timer.stop();
+	this.turnOffKeyHandler();
+	
+	var elClockMessage;	
+	if ( !elClockMessage ) {
+		elClockMessage = document.getElementById( "clockMessage" );
+	}
+
+	elClockMessage.innerHTML = "CLOCK EXPIRED!";
+};

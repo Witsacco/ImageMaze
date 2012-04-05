@@ -2,6 +2,7 @@
  * Constructor for new KeyHandler objects
  */
 function KeyHandler() {
+	this.enabled = false;
 	this.currentlyPressedKeys = {};
 	return this;
 }
@@ -10,14 +11,18 @@ function KeyHandler() {
  * Register the currently pressed key as having been pressed
  */
 KeyHandler.prototype.handleKeyDown = function( event ) {
-	this.currentlyPressedKeys[ event.keyCode ] = true;
+	if (this.enabled) {
+		this.currentlyPressedKeys[ event.keyCode ] = true;
+	}
 };
 
 /*
  * Unregister the key that was recently pressed
  */
 KeyHandler.prototype.handleKeyUp = function( event ) {
-	this.currentlyPressedKeys[ event.keyCode ] = false;
+	if (this.enabled) {
+		this.currentlyPressedKeys[ event.keyCode ] = false;
+	}
 };
 
 /*
@@ -43,4 +48,13 @@ KeyHandler.prototype.handleKeys = function( pos ) {
 	else if ( this.currentlyPressedKeys[ 39 ] ) {
 		pos.xRot += 0.05;
 	}
+};
+
+KeyHandler.prototype.enable = function() {
+	this.enabled = true;
+};
+
+KeyHandler.prototype.disable = function() {
+	this.enabled = false;
+	this.currentlyPressedKeys = {};
 };

@@ -242,6 +242,25 @@ function webGLStart() {
 	var startButton = document.getElementById( "startButton" );
 	startButton.onclick = startGame;
 
+	// Assign a submit handler to the guess box
+	$( "#guessForm" ).submit( function() {
+		var elGuessBox = $( "#guessBox" ); 
+		var guess = elGuessBox.val(); 
+		var isGuessCorrect = App.guessWord( guess );
+		
+		if ( isGuessCorrect ) {
+			App.chooseWordAndRefreshImages();
+			App.addTime();
+		}
+		else {
+			alert( "Try again!" );
+		}
+
+		elGuessBox.val( "" );
+
+		return false;
+	} );
+	
 	var canvas = document.getElementById( "lesson06-canvas" );
 
 	var gl = initGL( canvas );
@@ -260,6 +279,8 @@ function webGLStart() {
 }
 
 function startGame() {
+	App.turnOnKeyHandler();
+	
 	App.chooseWordAndRefreshImages();
 
 	App.timer.start();
