@@ -82,7 +82,9 @@ def chooseWordAndGetImages():
     if len(output_urls) >= numberOfImagesRequested:
       break
   
-  return json.dumps( output_urls )
+  retval = { "urls": output_urls, "word": word }
+  
+  return json.dumps( retval )
 
 
 if __name__ == '__main__':

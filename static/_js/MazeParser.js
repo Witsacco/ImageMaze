@@ -121,8 +121,8 @@ MazeParser.prototype.parse = function( text ) {
 					curRow.push( new FinishCube() );
 					break;
 					
-				// Token "T" means top ImageCube
-				case 'T':
+				// Token "I" means top ImageCube
+				case 'I':
 					curRow.push( new ImageCube( imageCubeSequence ) );
 					++imageCubeSequence;
 					break;

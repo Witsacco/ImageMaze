@@ -111,7 +111,6 @@ function initTexture( gl ) {
 		imageCubeTextures.push( texture );
 
 		img.onload = function() {
-			console.log('calling something: ' + this.id);
 			handleLoadedTexture( gl, imageCubeTextures[ this.id ] );
 		};
 		

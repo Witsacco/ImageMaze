@@ -1,15 +1,18 @@
 // Cube types
 // X = standard cube
 // O = finishing cube
-// T = top image cube
+// I = top image cube
 
 var maze =
 	".X.O\n" +
-	"TXXX\n" +
+	"IXXX\n" +
 	"X..X\n" +
-	"XTXT";
+	"XIXI";
 
 function ImageMazeApp() {
+	
+	// Current word to be guessed
+	this.curWord = "";
 	
 	var keyHandler = new KeyHandler();
 	
@@ -53,7 +56,7 @@ function ImageMazeApp() {
 		elClock.innerHTML = secRemaining;
 	};
 
-	this.timer = new Timer( 5, onTimerExpire, onTimerChange );
+	this.timer = new Timer( 10, onTimerExpire, onTimerChange );
 
 	return this;
 }
@@ -86,14 +89,28 @@ ImageMazeApp.prototype.getRot = function() { return this.pos.xRot };
 ImageMazeApp.prototype.getMaze = function() { return this.maze };
 
 ImageMazeApp.prototype.chooseWordAndRefreshImages = function() {
-	$.getJSON("/getImageUrls", this.handleURLs );
+	var that = this;
+	
+	$.getJSON("/getImageUrls", function( data ) {
+		that.handleURLs( data );
+	} );
 };
 
 ImageMazeApp.prototype.handleURLs = function( data ) {
 
 	// TODO: fix this global nastiness
 	for (textureNum in imageCubeTextures) {
-		imageCubeTextures[ textureNum ].image.src = data[ textureNum ];
+		imageCubeTextures[ textureNum ].image.src = data.urls[ textureNum ];
 	}
-
+	
+	this.curWord = data.word;
 };
+
+ImageMazeApp.prototype.guessWord = function( guess ) {
+	return ( $.trim( guess ).toLowerCase() === this.curWord.toLowerCase() );
+};
+
+ImageMazeApp.prototype.addTime = function() {
+	this.timer.add( 10 );
+};
+
