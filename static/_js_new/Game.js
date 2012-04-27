@@ -58,7 +58,7 @@ var Game = ( function() {
 
 			var that = this;
 
-			WordGenerator.generate( this.maze.getNumImageCubes, function() {
+			WordGenerator.generate( this.maze.getNumImageCubes(), function() {
 				that.resetWord( word, imageUrls );
 			}, fail );
 
@@ -84,6 +84,26 @@ var Game = ( function() {
 
 	Game.prototype.handleRight = function() {
 		this.curPos.xRot += GAME_SPEED;
+	};
+	
+	Game.prototype.getNumImageCubes = function() {
+		return this.maze.getNumImageCubes();
+	};
+	
+	Game.prototype.getX = function() {
+		return this.curPos.x;
+	};
+
+	Game.prototype.getZ = function() {
+		return this.curPos.z;
+	};
+
+	Game.prototype.getXRot = function() {
+		return this.curPos.xRot;
+	};
+
+	Game.prototype.getMaze = function() {
+		return this.maze;
 	};
 
 	function fail() {

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+ <head>
+	<title>Image Maze: A Game from Witsacco</title>
+	<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+
+	<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+
+	<script type="text/javascript" src="static/_js_new/gl/glMatrix-0.9.5.min.js"></script>
+	<script type="text/javascript" src="static/_js_new/gl/webgl-utils.js"></script>
+
+	<script id="shader-fs" type="x-shader/x-fragment">
+
+	#ifdef GL_ES
+	precision highp float;
+	#endif
+
+	varying vec2 vTextureCoord;
+
+	uniform sampler2D uSampler;
+
+	void main(void) {
+		gl_FragColor = texture2D(uSampler, vec2(vTextureCoord.s, vTextureCoord.t));
+	}
+
+	</script>
+
+	<script id="shader-vs" type="x-shader/x-vertex">
+
+	attribute vec3 aVertexPosition;
+	attribute vec2 aTextureCoord;
+
+	uniform mat4 uMVMatrix;
+	uniform mat4 uPMatrix;
+
+	varying vec2 vTextureCoord;
+
+
+	void main(void) {
+		gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
+		vTextureCoord = aTextureCoord;
+	}
+
+	</script>
+	
+	<script type="text/javascript" src="static/_js_new/gl/ModelViewStack.js"></script>
+	<script type="text/javascript" src="static/_js_new/gl/Texture.js"></script>
+
+	<script type="text/javascript" src="static/_js_new/utils/KeyHandler.js"></script>
+	<script type="text/javascript" src="static/_js_new/utils/MazeParser.js"></script>
+	<script type="text/javascript" src="static/_js_new/utils/Timer.js"></script>
+	<script type="text/javascript" src="static/_js_new/utils/WordGenerator.js"></script>
+	
+	<script type="text/javascript" src="static/_js_new/Cube.js"></script>
+	<script type="text/javascript" src="static/_js_new/FinishCube.js"></script>
+	<script type="text/javascript" src="static/_js_new/Game.js"></script>
+	<script type="text/javascript" src="static/_js_new/ImageCube.js"></script>
+	<script type="text/javascript" src="static/_js_new/Maze.js"></script>
+	
+	<script type="text/javascript" src="static/_js_new/view/MazeDrawer.js"></script>
+	<script type="text/javascript" src="static/_js_new/view/DisplayManager.js"></script>
+	
+	<script>
+		$(function() {
+			var pathToMaze = "mazes/maze0.txt";
+			
+			var game = new Game( pathToMaze );
+			
+			var manager = new DisplayManager( game, "#mazeCanvas", "#clock", "#guessBox", "#clockMessage" );
+			
+			manager.start();
+		});
+	</script>
+	
+ </head>
+ <body onload="webGLStart();">
+
+	<div id="clockHeader">
+	<span id="clock">5</span>
+	<span id="clockMessage"></span>
+	</div>
+	<canvas id="mazeCanvas" style="border: none;" width="500" height="500"></canvas>
+	<div id="isValid"></div>
+	<button id="startButton">Start!</button>
+	
+	<form id="guessForm">
+ 	 <label for="guessBox" class="guess-label">Guess the word:</label>
+	 <input type="text" id="guessBox" size="20" autocomplete="off" />
+	</form>
+ </body>
+</html>

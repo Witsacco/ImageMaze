@@ -54,6 +54,7 @@ var Maze = ( function() {
 	};
 
 	Maze.prototype.getCubeAtPosition = function( x, y ) {
+		// TODO:
 		// translate x and y position to grid indices and return cube at that index
 		// Handle out-of-bounds positions?
 	};
