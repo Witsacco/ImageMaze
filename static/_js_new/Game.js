@@ -4,7 +4,7 @@ var Game = ( function() {
 	var CORRECT_GUESS_BONUS = 5;
 	var GAME_SPEED = 0.05;
 
-	function Game( fileName ) {
+	function Game( fileName, ondone ) {
 
 		var that = this;
 
@@ -15,10 +15,12 @@ var Game = ( function() {
 			that.maze = MazeParser.parse( data );
 
 			// Generate a word and get image URLs for each ImageCube in the maze
-			WordGenerator.generate( that.maze.getNumImageCubes, function() {
+			WordGenerator.generate( that.maze.getNumImageCubes(), function( imageUrls ) {
 				that.resetWord( word, imageUrls );
 			}, fail );
 
+			// Invoke callback now that the Game is ready to be used
+			ondone( that );
 		} );
 
 		this.curPos = {
@@ -32,9 +34,12 @@ var Game = ( function() {
 			z : 0,
 			xRot : 0
 		};
+		
+		// TODO: FIX THIS!
+		var noop = function() {};
 
 		// TODO: This needs callbacks
-		this.timer = new Timer( INITIAL_TIME_ALLOTMENT );
+		this.timer = new Timer( INITIAL_TIME_ALLOTMENT, noop, noop );
 
 	}
 	

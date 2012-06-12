@@ -13,6 +13,10 @@ var Maze = ( function() {
 		}
 	}
 
+	Maze.prototype.getCubes = function() {
+		return this.grid;
+	};
+
 	Maze.prototype.setCubeAtIndex = function( row, col, cube ) {
 		
 		// Add cube to grid

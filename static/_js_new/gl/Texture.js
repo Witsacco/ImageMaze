@@ -2,14 +2,14 @@ var Texture = ( function() {
 
 	function Texture( gl, src ) {
 
-		this.texture = gl.createTexture();
+		this.glTexture = gl.createTexture();
 
 		var img = new Image();
-		this.texture.image = img;
+		this.image = img;
 
 		var that = this;
 		img.onload = function() {
-			handleLoadedTexture( gl, that.texture );
+			handleLoadedTexture( gl, that );
 		};
 
 		if ( typeof src !== "undefined" ) {
@@ -20,7 +20,7 @@ var Texture = ( function() {
 	function handleLoadedTexture( gl, texture ) {
 		gl.pixelStorei( gl.UNPACK_FLIP_Y_WEBGL, true );
 
-		gl.bindTexture( gl.TEXTURE_2D, texture );
+		gl.bindTexture( gl.TEXTURE_2D, texture.glTexture );
 		gl.texImage2D( gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, texture.image );
 		gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST );
 		gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST );
@@ -29,7 +29,7 @@ var Texture = ( function() {
 	}
 
 	Texture.prototype.setSrc = function( src ) {
-		this.texture.image.src = src;
+		this.image.src = src;
 	};
 
 	return Texture;

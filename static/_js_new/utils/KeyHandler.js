@@ -5,6 +5,9 @@ function KeyHandler(onDown, onUp, onLeft, onRight) {
 	this.enabled = false;
 	this.currentlyPressedKeys = {};
 	
+	document.onkeydown = $.proxy( this.handleKeyDown, this );
+	document.onkeyup = $.proxy( this.handleKeyUp, this );
+
 	this.onDown = onDown;
 	this.onUp = onUp;
 	this.onLeft = onLeft;

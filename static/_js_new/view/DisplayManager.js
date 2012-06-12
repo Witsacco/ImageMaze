@@ -15,15 +15,16 @@ var DisplayManager = ( function() {
 		}
 		catch ( e ) {
 			// TODO: populate message element with error
+			alert( "Unable to create maze drawer: " + e.message );
 		}
 		
 		var that = this;
 		
 		this.keyhandler = new KeyHandler(
-			that.game.handleDown,	
-			that.game.handleUp,	
-			that.game.handleLeft,	
-			that.game.handleRight
+			$.proxy( this.game.handleDown, this.game ),	
+			$.proxy( this.game.handleUp, this.game ),
+			$.proxy( this.game.handleLeft, this.game ),
+			$.proxy( this.game.handleRight, this.game )
 		);
 	}
 	
@@ -37,13 +38,13 @@ var DisplayManager = ( function() {
 	};
 
 	DisplayManager.prototype.tick = function() {
-		this = that;
 		
-		requestAnimFrame( function() {
-			that.tick();
-		} );
+		requestAnimFrame( $.proxy( this.tick, this ) );
 
 		this.keyhandler.handleKeys();
+		
+		// TODO: this is a hack, remove
+		$('#isValid').text("X: " + this.game.getX() + " - Z: " + this.game.getZ());
 
 		/*
 		TODO:

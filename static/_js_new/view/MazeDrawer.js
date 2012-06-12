@@ -6,21 +6,23 @@ var MazeDrawer = ( function() {
 		this.mvMatrix = mat4.create();
 		this.pMatrix = mat4.create();
 
-		this.mvMatrixStack = new ModelViewStack();
+		this.mvMatrixStack = new ModelViewStack(mat4);
 
 		this.gl = initGL( elCanvas );
 
 		this.shaderProgram = initShaders( this.gl );
 
+		// Initialize to null.  These will be set in "initBuffers"
 		this.cubeVertexPositionBuffer = null;
 		this.cubeVertexTextureCoordBuffer = null;
+		this.cubeBuffers = null;
 
-		this.cubeBuffers = initBuffers( this.gl, this.cubeVertexPositionBuffer, this.cubeVertexTextureCoordBuffer );
+		initBuffers( this.gl, this );
 
 		this.textures = initTextures( this.gl, this.game.getNumImageCubes() );
 
 		this.gl.clearColor( 0.0, 0.0, 0.0, 1.0 );
-		this.gl.enable( gl.DEPTH_TEST );
+		this.gl.enable( this.gl.DEPTH_TEST );
 	}
 
 	MazeDrawer.prototype.draw = function() {
@@ -102,13 +104,18 @@ var MazeDrawer = ( function() {
 			texture = this.textures.crate;
 		}
 
-		this.gl.bindTexture( this.gl.TEXTURE_2D, texture );
+		this.gl.bindTexture( this.gl.TEXTURE_2D, texture.glTexture );
 		this.gl.uniform1i( this.shaderProgram.samplerUniform, 0 );
 
 		this.gl.bindBuffer( this.gl.ELEMENT_ARRAY_BUFFER, indexBuffer );
-		setMatrixUniforms( this.gl );
+		this.setMatrixUniforms();
 		this.gl.drawElements( this.gl.TRIANGLES, indexBuffer.numItems, this.gl.UNSIGNED_SHORT, 0 );
 
+	};
+	
+	MazeDrawer.prototype.setMatrixUniforms = function() {
+		this.gl.uniformMatrix4fv( this.shaderProgram.pMatrixUniform, false, this.pMatrix );
+		this.gl.uniformMatrix4fv( this.shaderProgram.mvMatrixUniform, false, this.mvMatrix );
 	};
 
 	function initGL( elCanvas ) {
@@ -125,6 +132,41 @@ var MazeDrawer = ( function() {
 		}
 
 		return gl;
+	}
+
+	function getShader( gl, id ) {
+		var shaderScript = document.getElementById( id );
+		if ( !shaderScript ) {
+			return null;
+		}
+	
+		var str = "";
+		var k = shaderScript.firstChild;
+		while ( k ) {
+			if ( k.nodeType == 3 ) {
+				str += k.textContent;
+			}
+			k = k.nextSibling;
+		}
+	
+		var shader;
+		if ( shaderScript.type == "x-shader/x-fragment" ) {
+			shader = gl.createShader( gl.FRAGMENT_SHADER );
+		} else if ( shaderScript.type == "x-shader/x-vertex" ) {
+			shader = gl.createShader( gl.VERTEX_SHADER );
+		} else {
+			return null;
+		}
+	
+		gl.shaderSource( shader, str );
+		gl.compileShader( shader );
+	
+		if ( !gl.getShaderParameter( shader, gl.COMPILE_STATUS ) ) {
+			alert( gl.getShaderInfoLog( shader ) );
+			return null;
+		}
+	
+		return shader;
 	}
 
 	function initShaders( gl ) {
@@ -155,9 +197,9 @@ var MazeDrawer = ( function() {
 		return shaderProgram;
 	}
 
-	function initBuffers( gl, cubeVertexPositionBuffer, cubeVertexTextureCoordBuffer ) {
+	function initBuffers( gl, drawer ) {
 
-		cubeVertexPositionBuffer = gl.createBuffer();
+		var cubeVertexPositionBuffer = gl.createBuffer();
 		gl.bindBuffer( gl.ARRAY_BUFFER, cubeVertexPositionBuffer );
 
 		var vertices = [
@@ -183,7 +225,7 @@ var MazeDrawer = ( function() {
 		cubeVertexPositionBuffer.itemSize = 3;
 		cubeVertexPositionBuffer.numItems = 16;
 
-		cubeVertexTextureCoordBuffer = gl.createBuffer();
+		var cubeVertexTextureCoordBuffer = gl.createBuffer();
 		gl.bindBuffer( gl.ARRAY_BUFFER, cubeVertexTextureCoordBuffer );
 
 		var textureCoords = [
@@ -260,7 +302,9 @@ var MazeDrawer = ( function() {
 			}
 		}
 
-		return cubeBuffers;
+		drawer.cubeVertexPositionBuffer = cubeVertexPositionBuffer;
+		drawer.cubeVertexTextureCoordBuffer = cubeVertexTextureCoordBuffer;
+		drawer.cubeBuffers = cubeBuffers;
 	}
 
 	function initTextures( gl, numOfImageCubes ) {
@@ -275,11 +319,6 @@ var MazeDrawer = ( function() {
 			finish : FinishTexture( gl ),
 			images : imageCubeTextures
 		}
-	}
-
-	function setMatrixUniforms( gl ) {
-		gl.uniformMatrix4fv( shaderProgram.pMatrixUniform, false, pMatrix );
-		gl.uniformMatrix4fv( shaderProgram.mvMatrixUniform, false, mvMatrix );
 	}
 
 	return MazeDrawer;

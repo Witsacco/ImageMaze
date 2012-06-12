@@ -62,18 +62,21 @@
 	
 	<script>
 		$(function() {
-			var pathToMaze = "mazes/maze0.txt";
+			var pathToMaze = "maze0.txt";
 			
-			var game = new Game( pathToMaze );
+			// TODO: make Game throw errors in constructor
+			var game = new Game( pathToMaze, function( game ) {
 			
-			var manager = new DisplayManager( game, "#mazeCanvas", "#clock", "#guessBox", "#clockMessage" );
+				var manager = new DisplayManager( game, "#mazeCanvas", "#clock", "#guessBox", "#clockMessage" );
+				manager.start();
+				
+			});
 			
-			manager.start();
 		});
 	</script>
 	
  </head>
- <body onload="webGLStart();">
+ <body>
 
 	<div id="clockHeader">
 	<span id="clock">5</span>
