@@ -2,14 +2,18 @@ var Cube = ( function() {
 
 	var cubeType = "Cube";
 	
+	// TRUE means there is a wall.  FALSE means the wall is missing
 	function Cube() {
-		this.top = this.bottom = this.left = this.right = false;
+		this.top = this.bottom = this.left = this.right = true;
 		
 		this.name = buildName( this.top, this.bottom, this.left, this.right );
 	}
 	
 	Cube.prototype.setWall = function( wall, isAWall ) {
 		this[ wall ] = isAWall;
+
+		this.name = buildName( this.top, this.bottom, this.left, this.right );
+
 	};
 	
 	Cube.prototype.setWalls = function ( top, bottom, left, right ) {
@@ -17,8 +21,6 @@ var Cube = ( function() {
 		this.setWall( "bottom", bottom );
 		this.setWall( "left", left );
 		this.setWall( "right", right );
-
-		this.name = buildName( top, bottom, left, right );
 	};
 
 	Cube.prototype.getName = function() {

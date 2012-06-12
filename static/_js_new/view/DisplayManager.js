@@ -73,6 +73,7 @@ var DisplayManager = ( function() {
 	};
 	
 	DisplayManager.prototype.start = function() {
+		this.keyhandler.enable();
 		this.game.start();
 		this.tick();
 	};

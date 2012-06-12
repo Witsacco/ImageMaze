@@ -7,6 +7,8 @@ var Game = ( function() {
 	function Game( fileName, ondone ) {
 
 		var that = this;
+		
+		this.queueOfNewImageURLs = [];
 
 		// Load the file
 		loadMazeText( fileName, function( data ) {
@@ -15,7 +17,7 @@ var Game = ( function() {
 			that.maze = MazeParser.parse( data );
 
 			// Generate a word and get image URLs for each ImageCube in the maze
-			WordGenerator.generate( that.maze.getNumImageCubes(), function( imageUrls ) {
+			WordGenerator.generate( that.maze.getNumImageCubes(), function( word, imageUrls ) {
 				that.resetWord( word, imageUrls );
 			}, fail );
 
@@ -49,8 +51,7 @@ var Game = ( function() {
 
 	Game.prototype.resetWord = function( word, imageUrls ) {
 		this.currentWord = word;
-
-		this.imageUrls = imageUrls;
+		this.queueOfNewImageURLs = imageUrls;
 	};
 
 	Game.prototype.start = function() {
@@ -109,6 +110,14 @@ var Game = ( function() {
 
 	Game.prototype.getMaze = function() {
 		return this.maze;
+	};
+
+	Game.prototype.getQueueOfNewImageURLs = function() {
+		return this.queueOfNewImageURLs;
+	};
+
+	Game.prototype.clearQueueOfNewImageURLs = function() {
+		this.queueOfNewImageURLs = [];
 	};
 
 	function fail() {

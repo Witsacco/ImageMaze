@@ -23,7 +23,7 @@ var Maze = ( function() {
 		this.grid[ row ][ col ] = cube;
 		
 		// If cube is an ImageCube, keep track of how many we've seen
-		if ( cube.getType() == "ImageCube" ) {
+		if ( cube.getType() === "ImageCube" ) {
 			++this.numImageCubes;
 		}
 		
@@ -32,10 +32,10 @@ var Maze = ( function() {
 		
 		// Update walls of the newly added cube
 		cube.setWalls(
-			neighbors.top !== null,
-			neighbors.bottom !== null,
-			neighbors.left !== null,
-			neighbors.right !== null
+			neighbors.top === null,
+			neighbors.bottom === null,
+			neighbors.left === null,
+			neighbors.right === null
 		);
 		
 		// Update walls of neighbors of newly added cube

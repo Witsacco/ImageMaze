@@ -37,6 +37,17 @@ var MazeDrawer = ( function() {
 		mat4.rotate( this.mvMatrix, this.game.getXRot(), [ 0, 1, 0 ] );
 		mat4.translate( this.mvMatrix, [ -this.game.getX(), 0.0, -this.game.getZ() ] );
 
+		// Check if there are new images to be loaded up
+		var urlQueue = this.game.getQueueOfNewImageURLs();
+		if ( urlQueue.length > 0 ) {
+			
+			for ( var i = 0; i < urlQueue.length; ++i ) {
+				this.textures.images[ i ].setSrc( urlQueue[ i ] );
+			}
+			
+			this.game.clearQueueOfNewImageURLs();
+		}
+		
 		// Grab our grid of Cubes
 		var maze = this.game.getMaze().getCubes();
 
@@ -279,16 +290,16 @@ var MazeDrawer = ( function() {
 						gl.bindBuffer( gl.ELEMENT_ARRAY_BUFFER, cubeBuffers[ name ] );
 
 						var cubeVertexIndices = [];
-						if ( a === 1 ) {
+						if ( a === 0 ) {
 							cubeVertexIndices = cubeVertexIndices.concat( wallIndices.front );
 						}
-						if ( b === 1 ) {
+						if ( b === 0 ) {
 							cubeVertexIndices = cubeVertexIndices.concat( wallIndices.back );
 						}
-						if ( c === 1 ) {
+						if ( c === 0 ) {
 							cubeVertexIndices = cubeVertexIndices.concat( wallIndices.left );
 						}
-						if ( d === 1 ) {
+						if ( d === 0 ) {
 							cubeVertexIndices = cubeVertexIndices.concat( wallIndices.right );
 						}
 
