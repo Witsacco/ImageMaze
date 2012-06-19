@@ -67,9 +67,9 @@
 			// TODO: make Game throw errors in constructor
 			var game = new Game( pathToMaze, function( game ) {
 			
-				var manager = new DisplayManager( game, "#mazeCanvas", "#clock", "#guessBox", "#clockMessage" );
-				manager.start();
-				
+				var manager = new DisplayManager( game, "#mazeCanvas", "#clock", "#guessForm", "#clockMessage" );
+
+				$( "#startButton" ).click( $.proxy( manager.start, manager ) );
 			});
 			
 		});
@@ -89,6 +89,7 @@
 	<form id="guessForm">
  	 <label for="guessBox" class="guess-label">Guess the word:</label>
 	 <input type="text" id="guessBox" size="20" autocomplete="off" />
+	 <span id="guessMessage"></span>
 	</form>
  </body>
 </html>

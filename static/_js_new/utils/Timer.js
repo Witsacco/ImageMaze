@@ -1,7 +1,5 @@
-function Timer( initSeconds, onExpire, onChange ) {
+function Timer( initSeconds ) {
 	this.secRemaining = initSeconds;
-	this.onExpire = onExpire;
-	this.onChange = onChange;
 }
 
 Timer.prototype.start = function() {
@@ -31,4 +29,12 @@ Timer.prototype.add = function( secToAdd ) {
 	this.secRemaining += secToAdd;
 	
 	this.onChange( this.secRemaining );
+};
+
+Timer.prototype.setOnChange = function( onChange ) {
+	this.onChange = onChange;
+};
+
+Timer.prototype.setOnExpire = function( onExpire ) {
+	this.onExpire = onExpire;
 };

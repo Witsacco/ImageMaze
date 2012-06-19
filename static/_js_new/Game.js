@@ -5,6 +5,8 @@ var Game = ( function() {
 	var GAME_SPEED = 0.05;
 
 	function Game( fileName, ondone ) {
+		
+		this.finished = false;		
 
 		var that = this;
 		
@@ -25,23 +27,23 @@ var Game = ( function() {
 			ondone( that );
 		} );
 
+		// This is the current position of the player.  It will
+		// only be updated with valid coordinates
 		this.curPos = {
 			x : 0,
 			z : 0,
 			xRot : 0
 		};
 
-		this.priorPos = {
+		// This holds the prospective next move.  It may or may not be valid.
+		// This will be copied into the current position if valid on next tick
+		this.bufferPos = {
 			x : 0,
 			z : 0,
 			xRot : 0
 		};
 		
-		// TODO: FIX THIS!
-		var noop = function() {};
-
-		// TODO: This needs callbacks
-		this.timer = new Timer( INITIAL_TIME_ALLOTMENT, noop, noop );
+		this.timer = new Timer( INITIAL_TIME_ALLOTMENT );
 
 	}
 	
@@ -54,8 +56,12 @@ var Game = ( function() {
 		this.queueOfNewImageURLs = imageUrls;
 	};
 
-	Game.prototype.start = function() {
+	Game.prototype.start = function() {		
 		this.timer.start();
+	};
+
+	Game.prototype.stop = function() {
+		this.timer.stop();
 	};
 
 	Game.prototype.guessWord = function( word ) {
@@ -64,8 +70,8 @@ var Game = ( function() {
 
 			var that = this;
 
-			WordGenerator.generate( this.maze.getNumImageCubes(), function() {
-				that.resetWord( word, imageUrls );
+			WordGenerator.generate( this.maze.getNumImageCubes(), function( newWord, newImageUrls ) {
+				that.resetWord( newWord, newImageUrls );
 			}, fail );
 
 			return true;
@@ -75,21 +81,21 @@ var Game = ( function() {
 	};
 
 	Game.prototype.handleDown = function() {
-		this.curPos.x -= ( GAME_SPEED * Math.sin( this.curPos.xRot ) );
-		this.curPos.z += ( GAME_SPEED * Math.cos( this.curPos.xRot ) );
+		this.bufferPos.x -= ( GAME_SPEED * Math.sin( this.bufferPos.xRot ) );
+		this.bufferPos.z += ( GAME_SPEED * Math.cos( this.bufferPos.xRot ) );
 	};
 
 	Game.prototype.handleUp = function() {
-		this.curPos.x += ( GAME_SPEED * Math.sin( this.curPos.xRot ) );
-		this.curPos.z -= ( GAME_SPEED * Math.cos( this.curPos.xRot ) );
+		this.bufferPos.x += ( GAME_SPEED * Math.sin( this.bufferPos.xRot ) );
+		this.bufferPos.z -= ( GAME_SPEED * Math.cos( this.bufferPos.xRot ) );
 	};
 
 	Game.prototype.handleLeft = function() {
-		this.curPos.xRot -= GAME_SPEED;
+		this.bufferPos.xRot -= GAME_SPEED;
 	};
 
 	Game.prototype.handleRight = function() {
-		this.curPos.xRot += GAME_SPEED;
+		this.bufferPos.xRot += GAME_SPEED;
 	};
 	
 	Game.prototype.getNumImageCubes = function() {
@@ -108,6 +114,34 @@ var Game = ( function() {
 		return this.curPos.xRot;
 	};
 
+	Game.prototype.applyMove = function() {
+
+		// Apply turn
+		this.curPos.xRot = this.bufferPos.xRot;
+		
+		// Is (new x, old z) a valid position?
+		if ( this.maze.isValidPosition( this.bufferPos.x, this.curPos.z ) ) {
+			this.curPos.x = this.bufferPos.x;
+		}
+		else {
+			this.bufferPos.x = this.curPos.x;
+		}
+		
+		// Is (x, new z) a valid position ?
+		if ( this.maze.isValidPosition( this.curPos.x, this.bufferPos.z ) ) {
+			this.curPos.z = this.bufferPos.z;
+		}
+		else {
+			this.bufferPos.z = this.curPos.z;
+		}
+		
+		// Are you in the FinishCube?
+		if ( this.maze.getCubeAtPosition(this.curPos.x, this.curPos.z) instanceof FinishCube ) {
+			this.finished = true;
+		}
+		
+	};
+	
 	Game.prototype.getMaze = function() {
 		return this.maze;
 	};
@@ -118,6 +152,14 @@ var Game = ( function() {
 
 	Game.prototype.clearQueueOfNewImageURLs = function() {
 		this.queueOfNewImageURLs = [];
+	};
+	
+	Game.prototype.onTimeChange = function( onChange ) {
+		this.timer.setOnChange( onChange );
+	};
+	
+	Game.prototype.onTimeExpire = function ( onExpire ) {
+		this.timer.setOnExpire( onExpire );
 	};
 
 	function fail() {
