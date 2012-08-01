@@ -2,6 +2,7 @@ import os
 
 from flask import Flask
 from flask import render_template
+from flask import request
 
 from BeautifulSoup import BeautifulSoup
 import Image
@@ -30,8 +31,8 @@ def old():
 
 @app.route('/getImageUrls')
 def chooseWordAndGetImages():
-  # TODO: do we need to pass this in?
-  numberOfImagesRequested = 3
+  
+  numberOfImagesRequested = int( request.args.get( "numberOfImagesRequested" ) )
   size = 256, 256
 
   # grab a random word from the list
@@ -63,13 +64,17 @@ def chooseWordAndGetImages():
     input_urls.append(url)
 
   output_urls = []
-  q = re.compile('\.([^\.]*)$')
+  q = re.compile( 'image/([a-zA-Z]+)' )
 
   # TODO: make all of the requests for images happen at the same time
   for i, url in enumerate( input_urls ):
-    file_ext = q.findall(url)[0]
-    app.logger.debug("Retrieving image %d (%s) from [%s]..." % (i, file_ext, url))
     r = requests.get(url)
+    
+    content_type = r.headers[ "Content-Type" ]
+    extension = q.findall( content_type )[ 0 ]
+
+    app.logger.debug("Retrieved image %d (%s) from [%s]..." % (i, extension, url))
+    
     try:
       im = Image.open(cStringIO.StringIO(r.content))
       img = im.resize(size)
@@ -77,7 +82,7 @@ def chooseWordAndGetImages():
       app.logger.warning('Something failed. Continuing...')
       continue
   
-    filename = IMAGES_FOLDER + "/image%d.%s" % (i, file_ext)
+    filename = IMAGES_FOLDER + "/image%d.%s" % (i, extension)
     img.save( filename )
     
     # appending a timestamp to bust the browser's cache

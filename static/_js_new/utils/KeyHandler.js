@@ -1,7 +1,7 @@
 /*
  * Constructor for new KeyHandler objects
  */
-function KeyHandler(onDown, onUp, onLeft, onRight) {
+function KeyHandler(onDown, onUp, onLeft, onRight, onLetter, onBackspace, onEscape, onEnter ) {
 	this.enabled = false;
 	this.currentlyPressedKeys = {};
 	
@@ -12,6 +12,10 @@ function KeyHandler(onDown, onUp, onLeft, onRight) {
 	this.onUp = onUp;
 	this.onLeft = onLeft;
 	this.onRight = onRight;
+	this.onLetter = onLetter;
+	this.onBackspace = onBackspace;
+	this.onEscape = onEscape;
+	this.onEnter = onEnter;
 	
 	return this;
 }
@@ -20,9 +24,38 @@ function KeyHandler(onDown, onUp, onLeft, onRight) {
  * Register the currently pressed key as having been pressed
  */
 KeyHandler.prototype.handleKeyDown = function( event ) {
-	if (this.enabled) {
-		this.currentlyPressedKeys[ event.keyCode ] = true;
+
+	if ( !this.enabled ) {
+		return;
 	}
+
+	var keyCode = event.keyCode;
+	
+	this.currentlyPressedKeys[ keyCode ] = true;
+	
+	// If escape key
+	if ( keyCode === 27 ) {
+		this.onEscape();
+	}
+	// If enter key
+	else if ( keyCode === 13 ) {
+		this.onEnter();
+	}
+	else if ( keyCode === 8 ) {
+		this.onBackspace();
+	}
+	else {
+
+		// Convert key code to character
+		var char = String.fromCharCode( keyCode ).toLowerCase();
+		
+		// If the key pressed was a letter, invoke the "onLetter" callback and pass it the letter
+		if ( char >= "a" && char <= "z" ) {
+			this.onLetter( char );
+		}
+	}
+	
+	event.preventDefault();
 };
 
 /*

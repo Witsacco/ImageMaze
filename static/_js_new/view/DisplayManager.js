@@ -1,12 +1,15 @@
 var DisplayManager = ( function() {
 
-	function DisplayManager( game, elMazeCanvasId, elTimerId, elGuessFormId, elMessageId ) {
+	function DisplayManager( game, elMazeCanvasId, elTimerId, elCurrentGuessId, elMessageId ) {
 		this.game = game;
 
+		// This holds the guess as the user types it but before submission
+		this.currentGuess = "";
+		
 		this.elems = {
 			maze : $( elMazeCanvasId ),
 			timer : $( elTimerId ),
-			form : $( elGuessFormId ),
+			currentGuess : $( elCurrentGuessId ),
 			message : $( elMessageId )
 		};
 
@@ -24,21 +27,29 @@ var DisplayManager = ( function() {
 		} );
 
 		this.game.onTimeExpire( function() {
-			that.elems.message.html( "You lose, asshole." );
 			that.game.stop();
 			that.keyhandler.disable();
+			that.showMessage( "You lose, asshole.", false );
 		} );
 
-		this.keyhandler = new KeyHandler( $.proxy( this.game.handleDown, this.game ), $.proxy( this.game.handleUp,
-				this.game ), $.proxy( this.game.handleLeft, this.game ), $.proxy( this.game.handleRight, this.game ) );
+		var onDown = $.proxy( this.game.handleDown, this.game );
+		var onUp = $.proxy( this.game.handleUp, this.game );
+		var onLeft = $.proxy( this.game.handleLeft, this.game );
+		var onRight = $.proxy( this.game.handleRight, this.game );
+		var onLetter = $.proxy( this.updateGuess, this );
+		var onBackspace = $.proxy( this.backspaceGuess, this ); 
+		var onEscape = $.proxy( this.clearGuess, this );
+		var onEnter = $.proxy( this.handleGuess, this );
+		
+		this.keyhandler = new KeyHandler( onDown, onUp, onLeft, onRight, onLetter, onBackspace, onEscape, onEnter );
 
 		// Turn the keyhandler on and off when interacting with the guess box
-		var elGuessBox = $( "input:first", this.elems.form );
-		elGuessBox.focus( $.proxy( this.keyhandler.disable, this.keyhandler ) );
-		elGuessBox.blur( $.proxy( this.keyhandler.enable, this.keyhandler ) );
-
-		// Hook up the handler when the user guesses a word
-		$( elGuessFormId ).submit( $.proxy( this.handleGuess, this ) );
+//		var elGuessBox = $( "input:first", this.elems.form );
+//		elGuessBox.focus( $.proxy( this.keyhandler.disable, this.keyhandler ) );
+//		elGuessBox.blur( $.proxy( this.keyhandler.enable, this.keyhandler ) );
+//
+//		// Hook up the handler when the user guesses a word
+//		$( elGuessFormId ).submit( $.proxy( this.handleGuess, this ) );
 	}
 
 	DisplayManager.prototype.drawMaze = function() {
@@ -66,9 +77,9 @@ var DisplayManager = ( function() {
 
 		// Did we finish the maze?
 		if ( this.game.finished ) {
-			this.elems.message.html( "YOU FINISHED!" );
 			this.game.stop();
 			this.keyhandler.disable();
+			this.showMessage( "YOU FINISHED!", false )
 		}
 
 		// Draw scene
@@ -83,18 +94,57 @@ var DisplayManager = ( function() {
 
 	DisplayManager.prototype.handleGuess = function() {
 
-		var guessedWord = $( "input:first", this.elems.form ).val();
-
-		if ( this.game.guessWord( guessedWord ) ) {
-			$( "span:first", this.elems.form ).text( "Correct!" ).show().delay( 3000 ).fadeOut( 1000 );
+		var guessWasCorrect = this.game.guessWord( this.currentGuess );
+		
+		if ( guessWasCorrect ) {
+			this.showMessage( "Correct!", true );
 		} else {
-			$( "span:first", this.elems.form ).text( "That's not it!" ).show().delay( 3000 ).fadeOut( 1000 );
+			this.showMessage( "That's not it!", true );
 		}
 
-		$( "input:first", this.elems.form ).val( "" );
-
+		// Reset current guess (and update display)
+		this.clearGuess();
+		
 		return false;
 	};
 
+	DisplayManager.prototype.clearGuess = function() {
+		
+		// Reset the current guess
+		this.currentGuess = "";
+		
+		// Update display of guess
+		this.elems.currentGuess.text( this.currentGuess );
+		
+	};
+	
+	DisplayManager.prototype.updateGuess = function( newLetter ) {
+		
+		// Update our guess in memory
+		this.currentGuess += newLetter;
+		
+		// Show the update on the display
+		this.elems.currentGuess.text( this.currentGuess );
+		
+	};
+	
+	DisplayManager.prototype.backspaceGuess = function() {
+		
+		// Chop off the last letter
+		this.currentGuess = this.currentGuess.substring( 0, this.currentGuess.length - 1 );
+		
+		// Show the update on the display
+		this.elems.currentGuess.text( this.currentGuess );
+		
+	};
+	
+	DisplayManager.prototype.showMessage = function( message, fadeItOut ) {
+		this.elems.message.text( message ).stop( true ).show();
+		
+		if ( fadeItOut ) {
+			this.elems.message.animate({ opacity: 1 }, 3000).fadeOut( 1000 );
+		}		
+	};
+	
 	return DisplayManager;
 } )();
