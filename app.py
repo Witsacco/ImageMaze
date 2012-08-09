@@ -23,10 +23,6 @@ WORD_LIST_FILE = "wordlist.txt"
 
 @app.route('/')
 def hello():
-  return render_template('refactor.html')
-
-@app.route('/old')
-def old():
   return render_template('index.html')
 
 @app.route('/getImageUrls')
