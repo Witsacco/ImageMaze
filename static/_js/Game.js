@@ -5,7 +5,8 @@ var Game = ( function() {
 	var GAME_SPEED = 0.05;
 
 	function Game( fileName, ondone ) {
-		
+
+		// `finished` represents if this game has been finished by the player
 		this.finished = false;		
 
 		var that = this;
@@ -42,7 +43,8 @@ var Game = ( function() {
 			z : 0,
 			xRot : 0
 		};
-		
+
+		// Set up our timer with its initial time allotment
 		this.timer = new Timer( INITIAL_TIME_ALLOTMENT );
 
 	}
@@ -51,12 +53,16 @@ var Game = ( function() {
 		return this.timer.secRemaining;
 	};
 
+	Game.prototype.getCurrentWord = function() {
+		return this.currentWord;
+	};
+
 	Game.prototype.resetWord = function( word, imageUrls ) {
 		this.currentWord = word;
 		this.queueOfNewImageURLs = imageUrls;
 	};
 
-	Game.prototype.start = function() {		
+	Game.prototype.start = function() {
 		this.timer.start();
 	};
 

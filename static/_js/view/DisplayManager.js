@@ -1,6 +1,6 @@
 var DisplayManager = ( function() {
 
-	function DisplayManager( game, elMazeCanvasId, elTimerId, elCurrentGuessId, elMessageId ) {
+	function DisplayManager( game, elMazeCanvasId, elTimerId, elCurrentGuessId, elMessageId, elStartButtonId, elUserPositionId ) {
 		this.game = game;
 
 		// This holds the guess as the user types it but before submission
@@ -10,7 +10,9 @@ var DisplayManager = ( function() {
 			maze : $( elMazeCanvasId ),
 			timer : $( elTimerId ),
 			currentGuess : $( elCurrentGuessId ),
-			message : $( elMessageId )
+			message : $( elMessageId ),
+			startButton : $( elStartButtonId ),
+			userPosition : $( elUserPositionId )
 		};
 
 		try {
@@ -21,15 +23,24 @@ var DisplayManager = ( function() {
 		}
 
 		var that = this;
+
 		// Give the game instructions on what to do when the timer changes
 		this.game.onTimeChange( function( secRemaining ) {
-			that.elems.timer.html( secRemaining );
+			var clockString = secRemaining.toString();
+			
+			if ( secRemaining > 9 ) {
+				clockString = "0:" + clockString;
+			}
+			else {
+				clockString = "0:0" + clockString;
+			}
+			
+			that.elems.timer.html( clockString );
 		} );
 
 		this.game.onTimeExpire( function() {
-			that.game.stop();
-			that.keyhandler.disable();
-			that.showMessage( "You lose, asshole.", false );
+			var word = that.game.getCurrentWord();
+			that.stop( "You lost. The word was: " + word + "." );
 		} );
 
 		var onDown = $.proxy( this.game.handleDown, this.game );
@@ -69,17 +80,18 @@ var DisplayManager = ( function() {
 
 		this.keyhandler.handleKeys();
 
-		// TODO: this is a hack, remove
-		$( '#isValid' ).text( "X: " + this.game.getX() + " - Z: " + this.game.getZ() );
+		// Update the user's position on the front end, for debugging
+		this.elems.userPosition.text(
+			"X: " + this.game.getX() + "\n" +
+			"Z: " + this.game.getZ()
+		);
 
 		// Update the position of the player
 		this.game.applyMove();
 
 		// Did we finish the maze?
 		if ( this.game.finished ) {
-			this.game.stop();
-			this.keyhandler.disable();
-			this.showMessage( "YOU FINISHED!", false )
+			this.stop( "You FINISHED!" );
 		}
 
 		// Draw scene
@@ -87,9 +99,34 @@ var DisplayManager = ( function() {
 	};
 
 	DisplayManager.prototype.start = function() {
+		// Hide the start button
+		this.elems.startButton.hide();
+
+		// Enable the key handler to respond to keys
 		this.keyhandler.enable();
+
+		// Make sure the message element is clear
+		this.showMessage( "", false );
+
+		// Start the game!
 		this.game.start();
+
+		// Tell the browser to start ticking
 		this.tick();
+	};
+
+	DisplayManager.prototype.stop = function( finishMessage ) {
+		// Stop the game
+		this.game.stop();
+
+		// Show the message we finished with
+		this.showMessage( finishMessage, false );
+
+		// Show the start button again
+		this.elems.startButton.show();
+
+		// Tell the keyhandler to stop listening to input
+		this.keyhandler.disable();
 	};
 
 	DisplayManager.prototype.handleGuess = function() {
@@ -139,7 +176,7 @@ var DisplayManager = ( function() {
 	};
 	
 	DisplayManager.prototype.showMessage = function( message, fadeItOut ) {
-		this.elems.message.text( message ).stop( true ).show();
+		this.elems.message.text( message ).stop( true ).css({ opacity: 1 }).show();
 		
 		if ( fadeItOut ) {
 			this.elems.message.animate({ opacity: 1 }, 3000).fadeOut( 1000 );

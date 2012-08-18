@@ -4,6 +4,9 @@
 	<title>Image Maze: A Game from Witsacco</title>
 	<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
 
+	<link href="static/style/main.css" rel="stylesheet" type="text/css">
+	<link href="http://fonts.googleapis.com/css?family=Syncopate|Racing+Sans+One|Press+Start+2P|Basic" rel="stylesheet" type="text/css">
+
 	<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
 
 	<script type="text/javascript" src="static/_js/gl/glMatrix-0.9.5.min.js"></script>
@@ -35,14 +38,13 @@
 
 	varying vec2 vTextureCoord;
 
-
 	void main(void) {
 		gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
 		vTextureCoord = aTextureCoord;
 	}
 
 	</script>
-	
+
 	<script type="text/javascript" src="static/_js/gl/ModelViewStack.js"></script>
 	<script type="text/javascript" src="static/_js/gl/Texture.js"></script>
 
@@ -50,47 +52,110 @@
 	<script type="text/javascript" src="static/_js/utils/MazeParser.js"></script>
 	<script type="text/javascript" src="static/_js/utils/Timer.js"></script>
 	<script type="text/javascript" src="static/_js/utils/WordGenerator.js"></script>
-	
+
 	<script type="text/javascript" src="static/_js/Cube.js"></script>
 	<script type="text/javascript" src="static/_js/FinishCube.js"></script>
 	<script type="text/javascript" src="static/_js/Game.js"></script>
 	<script type="text/javascript" src="static/_js/ImageCube.js"></script>
 	<script type="text/javascript" src="static/_js/Maze.js"></script>
-	
+
 	<script type="text/javascript" src="static/_js/view/MazeDrawer.js"></script>
 	<script type="text/javascript" src="static/_js/view/DisplayManager.js"></script>
-	
-	<script>
-		$(function() {
-			var pathToMaze = "maze0.txt";
-			
-			// TODO: make Game throw errors in constructor
-			var game = new Game( pathToMaze, function( game ) {
-			
-				var manager = new DisplayManager( game, "#mazeCanvas", "#clock", "#currentGuess", "#clockMessage" );
 
-				$( "#startButton" ).click( $.proxy( manager.start, manager ) );
+	<script>
+		// Create the callback for when the game is ready
+		var callbackWhenGameIsLoaded = function( game ) {
+			// Create the display manager for the game with element IDs
+			var manager = new DisplayManager(
+				game,
+				"#mazeCanvas",
+				"#clock",
+				"#currentGuess",
+				"#message",
+				"#startButton",
+				"#debugUserPosition"
+			);
+
+			// Tell the manager to start itself
+			manager.start();
+		};
+
+		// When the document is ready, put the click handler on our start button
+		$(function() {
+			// When clicking the start button, initialize everything and kick
+			//  off the new game.
+			$( "#startButton" ).click( function() {
+				// TODO: put levels within the game
+				var pathToMaze = "maze0.txt";
+
+				// Create a new game
+				// TODO: make Game throw errors in constructor
+				var game = new Game( pathToMaze, callbackWhenGameIsLoaded );
 			});
-			
 		});
 	</script>
-	
+
  </head>
  <body>
 
-	<div id="clockHeader">
-	<span id="clock">5</span>
-	<span id="clockMessage"></span>
-	</div>
-	<canvas id="mazeCanvas" style="border: none;" width="500" height="500"></canvas>
-	<div id="isValid"></div>
-	<button id="startButton">Start!</button>
-	
-	<p>
-		Guess the word:
-		<span id="currentGuess"></span>
-		<span id="guessMessage"></span>
-	</p>
-	
+	<section id="gameBackground">
+
+		<header>
+			<div class="center-wrapper">
+
+				<h2>A game by Witsacco</h2>
+				<h1>Image Maze</h1>
+
+			</div>
+		</header>
+
+		<section id="gameArea">
+			<div class="center-wrapper">
+
+				<button id="startButton">Start!</button>
+				<canvas id="mazeCanvas" width="600" height="600"></canvas>
+
+				<div id="gameControls">
+
+					<div id="clock">0:10</div>
+
+					<div id="message"></div>
+
+					<section id="guessing">
+						<p>Guess the word:</p>
+						<div id="currentGuess"></div>
+					</section>
+
+				</div>
+
+			</div>
+		</section>
+
+		<div id="debugUserPosition"></div>
+
+	</section>
+
+	<section id="instructions">
+		<div class="center-wrapper">
+
+			<h3>Instructions</h3>
+
+			<p>You're dropped in a maze and you've got to get to the end. Use the
+				arrow keys to find your way to the finish.</p>
+
+			<p>Some levels will have images displayed on the walls of the maze. If
+				you guess the word that is represented by the images, you'll get
+				some extra time to finish the maze.</p>
+
+			<p>Have fun!</p>
+
+		</div>
+	</section>
+
+	<footer>
+		<p>Made by Ryan and Chris in NYC. More at
+			<a href="http://witsacco.com">witsacco.com</a>.</p>
+	</footer>
+
  </body>
 </html>
