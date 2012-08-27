@@ -64,6 +64,11 @@ def chooseWordAndGetImages():
 
   # TODO: make all of the requests for images happen at the same time
   for i, url in enumerate( input_urls ):
+
+    ## If we've collected enough images, stop looking for more
+    if len(output_urls) >= numberOfImagesRequested:
+      break
+    
     r = requests.get(url)
     
     content_type = r.headers[ "Content-Type" ]
@@ -83,10 +88,8 @@ def chooseWordAndGetImages():
     
     # appending a timestamp to bust the browser's cache
     output_urls.append( "%s?%d" % (filename, int(time.time()+300)) )
-  
-    if len(output_urls) >= numberOfImagesRequested:
-      break
-  
+
+  ## This is what we'll return to the client  
   retval = { "urls": output_urls, "word": word }
   
   return json.dumps( retval )
