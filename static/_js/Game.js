@@ -4,29 +4,14 @@ var Game = ( function() {
 	var CORRECT_GUESS_BONUS = 5;
 	var GAME_SPEED = 0.05;
 
-	function Game( fileName, ondone ) {
+	var LEVELS = [ "maze0.txt", "maze1.txt" ];
+
+	function Game() {
 
 		// `finished` represents if this game has been finished by the player
-		this.finished = false;		
+		this.finished = false;
 
-		var that = this;
-		
 		this.queueOfNewImageURLs = [];
-
-		// Load the file
-		loadMazeText( fileName, function( data ) {
-
-			// After the file is loaded, parse the maze
-			that.maze = MazeParser.parse( data );
-
-			// Generate a word and get image URLs for each ImageCube in the maze
-			WordGenerator.generate( that.maze.getNumImageCubes(), function( word, imageUrls ) {
-				that.resetWord( word, imageUrls );
-			}, fail );
-
-			// Invoke callback now that the Game is ready to be used
-			ondone( that );
-		} );
 
 		// This is the current position of the player.  It will
 		// only be updated with valid coordinates
@@ -46,9 +31,38 @@ var Game = ( function() {
 
 		// Set up our timer with its initial time allotment
 		this.timer = new Timer( INITIAL_TIME_ALLOTMENT );
-
 	}
-	
+
+	Game.prototype.loadNewLevel = function( level, onLevelLoaded ) {
+		// Are we done?
+		if ( level > LEVELS.length ) {
+			alert( "You're already done!" );
+			return;
+		}
+
+		// Get the path to the specified level's maze
+		var fileName = LEVELS[ level ];
+
+		// Save context
+		var that = this;
+
+		// Load that level
+		loadMazeText( fileName, function( data ) {
+
+			// After the file is loaded, parse the maze
+			that.maze = MazeParser.parse( data );
+
+			// Generate a word and get image URLs for each ImageCube in the maze
+			WordGenerator.generate( that.maze.getNumImageCubes(), function( word, imageUrls ) {
+				that.resetWord( word, imageUrls );
+			}, fail );
+
+			// Invoke callback now that the Game is ready to be used
+			onLevelLoaded( that );
+		} );
+
+	};
+
 	Game.prototype.getTimeLeft = function() {
 		return this.timer.secRemaining;
 	};
@@ -103,11 +117,11 @@ var Game = ( function() {
 	Game.prototype.handleRight = function() {
 		this.bufferPos.xRot += GAME_SPEED;
 	};
-	
+
 	Game.prototype.getNumImageCubes = function() {
 		return this.maze.getNumImageCubes();
 	};
-	
+
 	Game.prototype.getX = function() {
 		return this.curPos.x;
 	};
@@ -124,7 +138,7 @@ var Game = ( function() {
 
 		// Apply turn
 		this.curPos.xRot = this.bufferPos.xRot;
-		
+
 		// Is (new x, old z) a valid position?
 		if ( this.maze.isValidPosition( this.bufferPos.x, this.curPos.z ) ) {
 			this.curPos.x = this.bufferPos.x;
@@ -132,7 +146,7 @@ var Game = ( function() {
 		else {
 			this.bufferPos.x = this.curPos.x;
 		}
-		
+
 		// Is (x, new z) a valid position ?
 		if ( this.maze.isValidPosition( this.curPos.x, this.bufferPos.z ) ) {
 			this.curPos.z = this.bufferPos.z;
@@ -140,14 +154,14 @@ var Game = ( function() {
 		else {
 			this.bufferPos.z = this.curPos.z;
 		}
-		
+
 		// Are you in the FinishCube?
 		if ( this.maze.getCubeAtPosition(this.curPos.x, this.curPos.z) instanceof FinishCube ) {
 			this.finished = true;
 		}
-		
+
 	};
-	
+
 	Game.prototype.getMaze = function() {
 		return this.maze;
 	};
@@ -159,11 +173,11 @@ var Game = ( function() {
 	Game.prototype.clearQueueOfNewImageURLs = function() {
 		this.queueOfNewImageURLs = [];
 	};
-	
+
 	Game.prototype.onTimeChange = function( onChange ) {
 		this.timer.setOnChange( onChange );
 	};
-	
+
 	Game.prototype.onTimeExpire = function ( onExpire ) {
 		this.timer.setOnExpire( onExpire );
 	};

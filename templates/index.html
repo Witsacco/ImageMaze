@@ -63,9 +63,13 @@
 	<script type="text/javascript" src="static/_js/view/DisplayManager.js"></script>
 
 	<script>
-		// Create the callback for when the game is ready
-		var callbackWhenGameIsLoaded = function( game ) {
-			// Create the display manager for the game with element IDs
+		// When the document is ready, put the click handler on our start
+		//  button
+		$(function() {
+			// Create a new game
+			// TODO: make Game throw errors in constructor
+			var game = new Game();
+
 			var manager = new DisplayManager(
 				game,
 				"#mazeCanvas",
@@ -76,21 +80,10 @@
 				"#debugUserPosition"
 			);
 
-			// Tell the manager to start itself
-			manager.start();
-		};
-
-		// When the document is ready, put the click handler on our start button
-		$(function() {
 			// When clicking the start button, initialize everything and kick
 			//  off the new game.
 			$( "#startButton" ).click( function() {
-				// TODO: put levels within the game
-				var pathToMaze = "maze0.txt";
-
-				// Create a new game
-				// TODO: make Game throw errors in constructor
-				var game = new Game( pathToMaze, callbackWhenGameIsLoaded );
+				game.loadNewLevel( 0, $.proxy(manager.start, manager) );
 			});
 		});
 	</script>
