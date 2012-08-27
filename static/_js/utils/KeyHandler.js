@@ -32,9 +32,13 @@ KeyHandler.prototype.handleKeyDown = function( event ) {
 	var keyCode = event.keyCode;
 	
 	this.currentlyPressedKeys[ keyCode ] = true;
-	
+
+	// If a modifier key is being held, bubble up input
+	if ( event.ctrlKey || event.altKey || event.metaKey ) {
+		return;
+	}
 	// If escape key
-	if ( keyCode === 27 ) {
+	else if ( keyCode === 27 ) {
 		this.onEscape();
 	}
 	// If enter key

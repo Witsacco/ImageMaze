@@ -134,13 +134,14 @@ var MazeDrawer = ( function() {
 		// Grab the canvas DOM element
 		var canvas = elCanvas.get( 0 );
 
-		var gl = canvas.getContext( "experimental-webgl" );
-		gl.viewportWidth = canvas.width;
-		gl.viewportHeight = canvas.height;
+		var gl = canvas.getContext( "webgl" ) || canvas.getContext( "experimental-webgl" );
 
 		if ( !gl ) {
-			throw new Error( "Unable to initialize WebGL canvas" );
+			throw new Error( "Unable to initialize WebGL canvas. Your browser may not support WebGL. Try the latest Chrome or Firefox." );
 		}
+
+		gl.viewportWidth = canvas.width;
+		gl.viewportHeight = canvas.height;
 
 		return gl;
 	}

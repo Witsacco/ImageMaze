@@ -8,4 +8,3 @@ To Do
 -----
 
 * Build more mazes/levels
-* Update the look and feel

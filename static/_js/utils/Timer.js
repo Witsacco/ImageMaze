@@ -4,7 +4,9 @@ function Timer( initSeconds ) {
 
 Timer.prototype.start = function() {
 	var that = this;
-	
+
+	this.onChange( this.secRemaining );
+
 	this.curInterval = setInterval( function() {
 		that.secRemaining -= 1;
 		
@@ -23,6 +25,10 @@ Timer.prototype.start = function() {
 
 Timer.prototype.stop = function() {
 	clearInterval( this.curInterval );
+};
+
+Timer.prototype.reset = function( initSeconds ) {
+	this.secRemaining = initSeconds;
 };
 
 Timer.prototype.add = function( secToAdd ) {

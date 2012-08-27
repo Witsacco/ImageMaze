@@ -36,12 +36,12 @@ var Texture = ( function() {
 } )();
 
 function CrateTexture( gl ) {
-	var src = "static/_images/crate.gif";
+	var src = "static/_images/rock.jpg";
 	return new Texture( gl, src );
 }
 
 function FinishTexture( gl ) {
-	var src = "static/_images/finish_crate.gif";
+	var src = "static/_images/goldbricks.jpeg";
 	return new Texture( gl, src );
 }
 
