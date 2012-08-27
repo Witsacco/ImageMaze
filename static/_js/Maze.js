@@ -49,8 +49,12 @@ var Maze = ( function() {
 		}
 	};
 
-	Maze.prototype.getCubeAtIndex = function( row, col ) {
-		return this.grid[ row ][ col ];
+	// First parameter is X dimension (column)
+	// Second parameter is Z dimension (row)
+	// When indexing into the grid, the z (row) comes first, followed by
+	// x (column)
+	Maze.prototype.getCubeAtIndex = function( x, z ) {
+		return this.grid[ z ][ x ];
 	};
 
 	Maze.prototype.getCubeAtPosition = function( x, z ) {
