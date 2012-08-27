@@ -72,7 +72,12 @@ def chooseWordAndGetImages():
     r = requests.get(url)
     
     content_type = r.headers[ "Content-Type" ]
-    extension = q.findall( content_type )[ 0 ]
+    try:
+        # Grab the extension out of the Content-Type header
+        extension = q.findall( content_type )[ 0 ]
+    except IndexError:
+        # We didn't get a Content-Type header, so skip this image
+        continue
 
     app.logger.debug("Retrieved image %d (%s) from [%s]..." % (i, extension, url))
     
