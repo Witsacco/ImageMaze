@@ -59,7 +59,8 @@ var DisplayManager = ( function() {
 
 	DisplayManager.prototype.tick = function() {
 
-		if ( this.game.finishedLevel === false ) {
+		// Keep looping if you haven't finished the level and you haven't run out of time
+		if ( this.game.finishedLevel === false && this.game.failedPreviousLevel === false ) {
 			requestAnimFrame( $.proxy( this.tick, this ) );
 		}
 

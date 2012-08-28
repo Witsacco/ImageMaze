@@ -46,5 +46,6 @@ function FinishTexture( gl ) {
 }
 
 function ImageTexture( gl ) {
-	return new Texture( gl );
+	var src = "static/_images/rock.jpg";
+	return new Texture( gl, src );
 }

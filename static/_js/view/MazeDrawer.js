@@ -93,12 +93,14 @@ var MazeDrawer = ( function() {
 	MazeDrawer.prototype.drawCube = function( indexBuffer, cube ) {
 
 		this.gl.bindBuffer( this.gl.ARRAY_BUFFER, this.cubeVertexPositionBuffer );
+	
 		this.gl.vertexAttribPointer(
 				this.shaderProgram.vertexPositionAttribute,
 				this.cubeVertexPositionBuffer.itemSize,
 				this.gl.FLOAT, false, 0, 0 );
 
 		this.gl.bindBuffer( this.gl.ARRAY_BUFFER, this.cubeVertexTextureCoordBuffer );
+
 		this.gl.vertexAttribPointer(
 				this.shaderProgram.textureCoordAttribute,
 				this.cubeVertexTextureCoordBuffer.itemSize,
