@@ -59,7 +59,7 @@ var DisplayManager = ( function() {
 
 	DisplayManager.prototype.tick = function() {
 
-		if ( this.game.finished === false ) {
+		if ( this.game.finishedLevel === false ) {
 			requestAnimFrame( $.proxy( this.tick, this ) );
 		}
 
@@ -74,9 +74,17 @@ var DisplayManager = ( function() {
 		// Update the position of the player
 		this.game.applyMove();
 
-		// Did we finish the maze?
-		if ( this.game.finished ) {
-			this.playerFinishedLevel( "You finished level 1! Ready for the next one?" );
+		// Did we finish the game?
+		if ( this.game.finishedGame ) {
+			var congratsMessage = "You won, you sly fox!";
+			this.playerFinishedGame( congratsMessage );
+		}
+		// Did we finish the level?
+		else if ( this.game.finishedLevel ) {
+			var levelSuccessMessage = "You finished level "
+			                        + this.game.getCurrentLevel()
+			                        + "! Ready for the next one?";
+			this.playerFinishedLevel( levelSuccessMessage );
 		}
 
 		// Draw scene
@@ -84,6 +92,9 @@ var DisplayManager = ( function() {
 	};
 
 	DisplayManager.prototype.start = function() {
+		// Init the level
+		this.game.initLevel();
+
 		// Create a maze drawer for the maze
 		try {
 			this.drawer = new MazeDrawer( this.elems.maze, this.game );
@@ -108,36 +119,37 @@ var DisplayManager = ( function() {
 		this.tick();
 	};
 
-	DisplayManager.prototype.playerFinishedLevel = function( finishMessage ) {
+	DisplayManager.prototype.stop = function( finishMessage ) {
 
 		// Stop the game from running
 		this.game.stop();
-		
+
 		// Show the message we finished with
 		this.showMessage( finishMessage, false );
-
-		// Show the start button again
-		this.elems.startButton.show();
 
 		// Tell the keyhandler to stop listening to input
 		this.keyhandler.disable();
 	};
-	
+
+	DisplayManager.prototype.playerFinishedGame = function( finishMessage ) {
+		this.stop( finishMessage );
+	};
+
+	DisplayManager.prototype.playerFinishedLevel = function( finishMessage ) {
+		this.stop( finishMessage );
+
+		// Show the start button again
+		this.elems.startButton.show();
+	};
+
 	DisplayManager.prototype.playerRanOutOfTime = function( finishMessage ) {
-
-		// TODO: Reset the entire game (timer reset, level reset, etc)
-		
-		// Stop the game
-		this.game.stop();
-
-		// Show the message we finished with
-		this.showMessage( finishMessage, false );
+		this.stop( finishMessage );
 
 		// Show the start button again
 		this.elems.startButton.show();
 
-		// Tell the keyhandler to stop listening to input
-		this.keyhandler.disable();
+		// Reset the game to level 0
+		this.game.reset();
 	};
 
 	DisplayManager.prototype.handleGuess = function() {
