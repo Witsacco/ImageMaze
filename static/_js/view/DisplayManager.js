@@ -33,7 +33,7 @@ var DisplayManager = ( function() {
 
 		this.game.onTimeExpire( function() {
 			var word = that.game.getCurrentWord();
-			that.stop( "You lost. The word was: " + word + "." );
+			that.playerRanOutOfTime( "You lost. The word was: " + word + "." );
 		} );
 
 		var onDown = $.proxy( this.game.handleDown, this.game );
@@ -76,7 +76,7 @@ var DisplayManager = ( function() {
 
 		// Did we finish the maze?
 		if ( this.game.finished ) {
-			this.stop( "You finished level 1! Ready for the next one?" );
+			this.playerFinishedLevel( "You finished level 1! Ready for the next one?" );
 		}
 
 		// Draw scene
@@ -108,7 +108,25 @@ var DisplayManager = ( function() {
 		this.tick();
 	};
 
-	DisplayManager.prototype.stop = function( finishMessage ) {
+	DisplayManager.prototype.playerFinishedLevel = function( finishMessage ) {
+
+		// Stop the game from running
+		this.game.stop();
+		
+		// Show the message we finished with
+		this.showMessage( finishMessage, false );
+
+		// Show the start button again
+		this.elems.startButton.show();
+
+		// Tell the keyhandler to stop listening to input
+		this.keyhandler.disable();
+	};
+	
+	DisplayManager.prototype.playerRanOutOfTime = function( finishMessage ) {
+
+		// TODO: Reset the entire game (timer reset, level reset, etc)
+		
 		// Stop the game
 		this.game.stop();
 

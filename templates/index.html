@@ -83,7 +83,7 @@
 			// When clicking the start button, initialize everything and kick
 			//  off the new game.
 			$( "#startButton" ).click( function() {
-				game.loadNewLevel( 0, $.proxy(manager.start, manager) );
+				game.loadNewLevel( $.proxy(manager.start, manager) );
 			});
 		});
 	</script>

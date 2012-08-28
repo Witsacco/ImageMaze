@@ -7,7 +7,19 @@ var Game = ( function() {
 	var LEVELS = [ "maze0.txt", "maze1.txt" ];
 
 	function Game() {
+		
+		// Set up our timer with its initial time allotment
+		this.timer = new Timer( INITIAL_TIME_ALLOTMENT );
 
+		// Set the player position, timer, etc.
+		this.resetGameState();
+		
+		// "Current level" is -1 because we haven't yet loaded a level
+		this.currentLevel = -1;
+	}
+
+	Game.prototype.resetGameState = function() {
+		
 		// `finished` represents if this game has been finished by the player
 		this.finished = false;
 
@@ -30,18 +42,30 @@ var Game = ( function() {
 		};
 
 		// Set up our timer with its initial time allotment
-		this.timer = new Timer( INITIAL_TIME_ALLOTMENT );
-	}
+		this.timer.reset( INITIAL_TIME_ALLOTMENT );
+	};
+	
+	Game.prototype.getCurrentLevel = function() {
+		return this.currentLevel;
+	};
+	
+	Game.prototype.loadNewLevel = function( onLevelLoaded ) {
 
-	Game.prototype.loadNewLevel = function( level, onLevelLoaded ) {
+		// Bump up to the next level and load it
+		++this.currentLevel;
+		
 		// Are we done?
-		if ( level > LEVELS.length ) {
+		if ( this.currentLevel >= LEVELS.length ) {
+			// TODO: implement total completion sequence
 			alert( "You're already done!" );
 			return;
 		}
 
+		// Reset the player position, etc.
+		this.resetGameState();
+		
 		// Get the path to the specified level's maze
-		var fileName = LEVELS[ level ];
+		var fileName = LEVELS[ this.currentLevel ];
 
 		// Save context
 		var that = this;
