@@ -148,7 +148,7 @@ var DisplayManager = ( function() {
 		// Show the start button again
 		this.elems.startButton.show();
 
-		// Reset the game to level 0
+		// Reset the game to the beginning of the current level
 		this.game.reset();
 	};
 

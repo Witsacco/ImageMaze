@@ -10,13 +10,15 @@ var Game = ( function() {
 		// Set up our timer with its initial time allotment
 		this.timer = new Timer( INITIAL_TIME_ALLOTMENT );
 
-		// Reset the game to initialize it
-		this.reset();
+		// "Current level" is -1 because we haven't yet loaded a level
+		this.currentLevel = -1;
+
+		// Initialize flag for level success
+		this.failedPreviousLevel = false;
 	}
 
 	Game.prototype.reset = function() {
-		// "Current level" is -1 because we haven't yet loaded a level
-		this.currentLevel = -1;
+		this.failedPreviousLevel = true;
 	};
 
 	Game.prototype.initLevel = function() {
@@ -56,8 +58,13 @@ var Game = ( function() {
 
 	Game.prototype.loadNewLevel = function( onLevelLoaded ) {
 
-		// Bump up to the next level and load it
-		++this.currentLevel;
+		if ( !this.failedPreviousLevel ) {
+			// Bump up to the next level and load it
+			++this.currentLevel;
+		}
+		else {
+			this.failedPreviousLevel = false;
+		}
 
 		// Are we done?
 		if ( this.currentLevel >= LEVELS.length ) {
