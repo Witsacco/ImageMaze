@@ -203,7 +203,7 @@ var DisplayManager = ( function() {
 		this.elems.message.text( message ).stop( true ).css({ opacity: 1 }).show();
 
 		if ( fadeItOut ) {
-			this.elems.message.animate({ opacity: 1 }, 3000).fadeOut( 1000 );
+			this.elems.message.animate({ opacity: 1 }, 3000).animate({ opacity: 0 }, 1000);
 		}
 	};
 
