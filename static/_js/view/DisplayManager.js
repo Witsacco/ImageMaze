@@ -83,7 +83,7 @@ var DisplayManager = ( function() {
 		// Did we finish the level?
 		else if ( this.game.finishedLevel ) {
 			var levelSuccessMessage = "You finished level "
-			                        + this.game.getCurrentLevel()
+			                        + ( this.game.getCurrentLevel() + 1 )
 			                        + "! Ready for the next one?";
 			this.playerFinishedLevel( levelSuccessMessage );
 		}
@@ -113,11 +113,11 @@ var DisplayManager = ( function() {
 		// Make sure the message element is clear
 		this.showMessage( "", false );
 
-		// Start the game!
-		this.game.start();
-
 		// Tell the browser to start ticking
 		this.tick();
+
+		// Start the game!
+		this.game.start();
 	};
 
 	DisplayManager.prototype.stop = function( finishMessage ) {

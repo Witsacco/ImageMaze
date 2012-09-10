@@ -8,5 +8,6 @@ To Do
 -----
 
 * Build more mazes/levels
-* Flip images so text is not backwards
-* Don't start timer until maze is ready to play
+* Better time expiry experience
+** Make clock text red
+** Make button say "Replay"
