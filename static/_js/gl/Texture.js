@@ -36,7 +36,7 @@ var Texture = ( function() {
 } )();
 
 function CrateTexture( gl ) {
-	var src = "static/_images/rock.jpg";
+	var src = "static/_images/bricks.jpeg";
 	return new Texture( gl, src );
 }
 
@@ -46,6 +46,6 @@ function FinishTexture( gl ) {
 }
 
 function ImageTexture( gl ) {
-	var src = "static/_images/rock.jpg";
+	var src = "static/_images/bricks.jpeg";
 	return new Texture( gl, src );
 }
