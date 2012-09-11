@@ -1,7 +1,7 @@
 var Game = ( function() {
 
-	var INITIAL_TIME_ALLOTMENT = 10;
-	var CORRECT_GUESS_BONUS = 5;
+	var INITIAL_TIME_ALLOTMENT = 20;
+	var CORRECT_GUESS_BONUS = 10;
 	var GAME_SPEED = 0.05;
 
 	var LEVELS = [ "maze0.txt", "maze1.txt" ];
