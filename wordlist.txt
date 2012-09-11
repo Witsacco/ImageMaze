@@ -595,7 +595,8 @@ pancake
 panda
 pansy
 panther
-pantspaper
+pants
+paper
 parcel
 parent
 park
@@ -794,7 +795,8 @@ spaghetti
 spark
 sparrow
 spear
-speedboatspider
+speedboat
+spider
 spike
 spinach
 sponge
