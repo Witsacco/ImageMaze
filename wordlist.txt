@@ -918,7 +918,6 @@ trousers
 truck
 trumpet
 trunk
-t-shirt
 tub
 tuba
 tugboat
@@ -968,7 +967,6 @@ whistle
 wilderness
 willow
 wind
-wind chime
 window
 windscreen
 wing
