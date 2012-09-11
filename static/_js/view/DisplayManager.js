@@ -144,7 +144,7 @@ var DisplayManager = ( function() {
 	    var that = this;
 	    
 	    this.elems.gameArea.animate({ opacity : 0.05 }, 2000, function() {
-	        that.elems.finishMessage.show();		        
+	        that.elems.finishMessage.fadeIn( 200 );		        
 	    });
 
 		this.stop( "" );

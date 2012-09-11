@@ -4,7 +4,8 @@ var Game = ( function() {
 	var CORRECT_GUESS_BONUS = 10;
 	var GAME_SPEED = 0.05;
 
-	var LEVELS = [ "maze0.txt", "maze1.txt" ];
+	var LEVELS = [ "maze0.txt", "maze1.txt", "maze2.txt",
+	               "maze3.txt", "maze4.txt", "maze5.txt" ];
 
 	function Game() {
 		// Set up our timer with its initial time allotment
