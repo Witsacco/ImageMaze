@@ -74,12 +74,25 @@ header h1 {
 	text-align: center;
 }
 
+.expired {
+    color: #FF1A1A;
+}
+
 #message {
 	width: 300px;
 	margin: 40px 0;
 	padding: 10px;
 	font-size: 16px;
 	text-transform: uppercase;
+}
+
+#finishMessage {
+    display: none;
+    position: absolute;
+    top: 400px;
+    width: 100%;
+    text-align: center;
+    font-size: 80px;
 }
 
 #guessing {

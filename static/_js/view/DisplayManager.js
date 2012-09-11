@@ -1,6 +1,6 @@
 var DisplayManager = ( function() {
 
-	function DisplayManager( game, elMazeCanvasId, elTimerId, elCurrentGuessId, elMessageId, elStartButtonId, elUserPositionId ) {
+	function DisplayManager( game, elMazeCanvasId, elTimerId, elCurrentGuessId, elMessageId, elStartButtonId, elUserPositionId, elGameAreaId, elFinishMessageId ) {
 		this.game = game;
 
 		// This holds the guess as the user types it but before submission
@@ -12,7 +12,9 @@ var DisplayManager = ( function() {
 			currentGuess : $( elCurrentGuessId ),
 			message : $( elMessageId ),
 			startButton : $( elStartButtonId ),
-			userPosition : $( elUserPositionId )
+			userPosition : $( elUserPositionId ),
+			gameArea : $( elGameAreaId ),
+			finishMessage : $( elFinishMessageId )
 		};
 
 		var that = this;
@@ -33,6 +35,8 @@ var DisplayManager = ( function() {
 
 		this.game.onTimeExpire( function() {
 			var word = that.game.getCurrentWord();
+			that.elems.timer.addClass( "expired" );
+			that.elems.startButton.text( "Replay" );
 			that.playerRanOutOfTime( "You lost. The word was: " + word + "." );
 		} );
 
@@ -77,8 +81,7 @@ var DisplayManager = ( function() {
 
 		// Did we finish the game?
 		if ( this.game.finishedGame ) {
-			var congratsMessage = "You won, you sly fox!";
-			this.playerFinishedGame( congratsMessage );
+			this.playerFinishedGame();
 		}
 		// Did we finish the level?
 		else if ( this.game.finishedLevel ) {
@@ -93,6 +96,12 @@ var DisplayManager = ( function() {
 	};
 
 	DisplayManager.prototype.start = function() {
+		// Ensure that the clock is not expired
+		this.elems.timer.removeClass( "expired" );
+
+		// Ensure that the start button is properly labeled
+		this.elems.startButton.text( "Start!" );
+
 		// Init the level
 		this.game.initLevel();
 
@@ -106,7 +115,7 @@ var DisplayManager = ( function() {
 
 		// Hide the start button
 		this.elems.startButton.hide();
-
+		
 		// Enable the key handler to respond to keys
 		this.keyhandler.enable();
 
@@ -121,7 +130,6 @@ var DisplayManager = ( function() {
 	};
 
 	DisplayManager.prototype.stop = function( finishMessage ) {
-
 		// Stop the game from running
 		this.game.stop();
 
@@ -132,8 +140,14 @@ var DisplayManager = ( function() {
 		this.keyhandler.disable();
 	};
 
-	DisplayManager.prototype.playerFinishedGame = function( finishMessage ) {
-		this.stop( finishMessage );
+	DisplayManager.prototype.playerFinishedGame = function() {
+	    var that = this;
+	    
+	    this.elems.gameArea.animate({ opacity : 0.05 }, 2000, function() {
+	        that.elems.finishMessage.show();		        
+	    });
+
+		this.stop( "" );
 	};
 
 	DisplayManager.prototype.playerFinishedLevel = function( finishMessage ) {

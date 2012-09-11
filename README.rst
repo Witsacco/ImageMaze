@@ -8,6 +8,3 @@ To Do
 -----
 
 * Build more mazes/levels
-* Better time expiry experience
-** Make clock text red
-** Make button say "Replay"
