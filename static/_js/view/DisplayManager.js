@@ -138,6 +138,9 @@ var DisplayManager = ( function() {
 
 		// Tell the keyhandler to stop listening to input
 		this.keyhandler.disable();
+		
+		// Move focus to start button so that enter key moves to next level
+		this.elems.startButton.focus();
 	};
 
 	DisplayManager.prototype.playerFinishedGame = function() {

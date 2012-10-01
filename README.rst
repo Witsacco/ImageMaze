@@ -9,7 +9,6 @@ To Do
 
 * Load the wall textures for the maze on page load (but hidden) so that the user
   doesn't "lose time" when first starting the maze.
-* Allow "Enter" to advance to the next level.
 * If the user doesn't type any guesses for 10 seconds, prompt them to just start
   typing to guess the word!
 * Make it clearer that the gold blocks are the end of the maze. Maybe there's an

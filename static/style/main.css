@@ -152,3 +152,7 @@ footer {
 footer a {
 	color: white;
 }
+
+button:focus {
+	outline: 0;
+}
