@@ -69,7 +69,10 @@ def chooseWordAndGetImages():
     if len(output_urls) >= numberOfImagesRequested:
       break
     
-    r = requests.get(url)
+    try:
+        r = requests.get(url)
+    except ConnectionError:
+        continue
     
     content_type = r.headers[ "Content-Type" ]
     try:
