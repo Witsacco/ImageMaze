@@ -161,10 +161,11 @@ var DisplayManager = ( function() {
 	};
 
 	DisplayManager.prototype.playerRanOutOfTime = function( finishMessage ) {
-		this.stop( finishMessage );
-
 		// Show the start button again
 		this.elems.startButton.show();
+
+		// Stop the game (and give focus to start button)
+		this.stop( finishMessage );
 
 		// Reset the game to the beginning of the current level
 		this.game.reset();
