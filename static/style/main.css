@@ -40,15 +40,26 @@ header h1 {
 	font-size: 64px;
 }
 
-#startButton {
-	position: absolute;
-	top: 273px;
-	left: 228px;
+#gameArea {
+    display: none;
+}
+
+.right {
+    text-align: right;
+}
+
+.retro-button {
 	padding: 16px;
 	font-family: 'Press Start 2P', sans-serif;
 	font-size: 18px;
 	border-radius: 4px;
 	cursor: pointer;
+}
+
+#startButton {
+	position: absolute;
+	top: 273px;
+	left: 228px;
 }
 
 #mazeCanvas {
@@ -128,6 +139,8 @@ header h1 {
 }
 
 #instructions h3 {
+	width: 600px;
+	margin: 0 auto;
 	font-family: 'Racing Sans One', sans-serif;
 	font-size: 28px;
 	text-transform: uppercase;
@@ -136,6 +149,7 @@ header h1 {
 
 #instructions p {
 	width: 600px;
+	margin: 0 auto;
 	margin-bottom: 12px;
 	font-family: 'Basic', sans-serif;
 	font-size: 18px;

@@ -88,6 +88,12 @@
 			$( "#startButton" ).click( function() {
 				game.loadNewLevel( $.proxy(manager.start, manager) );
 			});
+
+			// When clicking the play button, show the game.
+			$( "#playButton" ).click( function() {
+				$( "#gameArea" ).show( "blind", 1000 );
+				$( this ).hide();
+			});
 		});
 	</script>
 
@@ -138,7 +144,7 @@
 		<section id="gameArea">
 			<div class="center-wrapper">
 
-				<button id="startButton">Start!</button>
+				<button id="startButton" class="retro-button">Start!</button>
 				<canvas id="mazeCanvas" width="600" height="600"></canvas>
 
 				<div id="gameControls">
@@ -177,6 +183,9 @@
 
 			<p>Have fun!</p>
 
+			<p class="right">
+				<button id="playButton" class="retro-button">Play!</button>
+			</p>
 		</div>
 	</section>
 
@@ -187,7 +196,7 @@
 
 	<!-- Preload images for our maze textures -->
 	<img src="static/_images/bricks.jpeg" style="display: none;" />
-	<img src="static/_images/finish_crate.gif" style="display: none;" />
+	<img src="static/_images/goldbricks.jpeg" style="display: none;" />
 
  </body>
 </html>
