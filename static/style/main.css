@@ -48,6 +48,10 @@ header h1 {
     text-align: right;
 }
 
+.center {
+	text-align: center;
+}
+
 .retro-button {
 	padding: 16px;
 	font-family: 'Press Start 2P', sans-serif;
